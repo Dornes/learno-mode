@@ -1,4 +1,6 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { LoaderFunction, MetaFunction } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { supabaseClient as supabase } from "~/auth/supabase.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -7,14 +9,42 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+type Test = {
+  id: number;
+  created_at: string;
+  text: string;
+};
+
+const fetchData = async (id: number): Promise<Test> => {
+  const { data, error } = await supabase
+    .from("test")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error) {
+    console.error("Error fetching data from Supabase:", error);
+  }
+
+  return data;
+};
+
+export const loader: LoaderFunction = async () => {
+  const data = (await fetchData(1)) as Test;
+  return { data };
+};
+
 export default function Index() {
+  const { data } = useLoaderData<typeof loader>();
+  console.log(data);
+
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="flex flex-col items-center gap-16">
         <header className="flex flex-col items-center gap-9">
           <h1 className="leading text-2xl font-bold text-gray-800 dark:text-gray-100">
-            Welcome to <span className="sr-only">Remix</span>
+            {data.text} <span className="sr-only">Remix</span>
           </h1>
+          <button></button>
           <div className="h-[144px] w-[434px]">
             <img
               src="/logo-light.png"
