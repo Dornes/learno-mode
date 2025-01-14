@@ -3,6 +3,9 @@ export type Assignment = {
   created_at: string;
   title: string;
   description: string | null;
+  total_tasks: number;
+  approved_tasks: number;
+  all_tasks_approved: boolean;
 };
 
 export type Task = {
