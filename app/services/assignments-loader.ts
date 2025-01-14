@@ -7,11 +7,12 @@ export const assignmentsLoader: LoaderFunction = async () => {
     "get_all_assignments_with_task_info"
   );
   if (error) {
-    console.error("Error fetching assignments:", error);
-    throw new Error("Error fetching assignments");
+    throw new Error(`Error fetching assignments: ${error.message}`);
   }
-  const sortedAssignments = data.sort((a: Assignment, b: Assignment) => {
-    return a.title.localeCompare(b.title);
-  });
+  const sortedAssignments = Array.isArray(data)
+    ? data.sort((a: Assignment, b: Assignment) =>
+        a.title.localeCompare(b.title)
+      )
+    : [];
   return { data: sortedAssignments as Assignment[] };
 };
