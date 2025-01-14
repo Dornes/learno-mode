@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "../button";
-import { BotMessageSquare, Ghost, X } from "lucide-react";
+import { BotMessageSquare, X } from "lucide-react";
 import { Card, CardFooter, CardHeader, CardTitle } from "../card";
 import { Input } from "../input";
 
