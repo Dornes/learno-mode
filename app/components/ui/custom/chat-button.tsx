@@ -22,8 +22,8 @@ const ChatButton = () => {
 
     return (
         <div>
-            <Button className="fixed bottom-4 right-4 rounded-full p-4" onClick={() => setOpen(!open)}>Ask Ai <BotMessageSquare /></Button>
-            <Card className={`fixed bottom-16 right-4 w-[30rem] ${open ? "block" : "hidden"}`}>
+            <Button className="fixed bottom-4 right-4 rounded-full p-6 h-16 w-30 text-lg [&_svg]:size-7" onClick={() => setOpen(!open)}>Ask AI <BotMessageSquare /></Button>
+            <Card className={`fixed bottom-4 right-4 w-[30rem] ${open ? "block" : "hidden"}`}>
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <CardTitle>Chat with AI</CardTitle>
