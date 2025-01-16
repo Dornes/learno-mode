@@ -1,6 +1,6 @@
 import { LoaderFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import ChatButton from "~/components/ui/custom/chat-button";
+import ChatButton from "~/components/custom/chat-button";
 import { taskLoader } from "~/services/task-loader";
 
 export const loader: LoaderFunction = taskLoader;
