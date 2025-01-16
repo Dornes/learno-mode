@@ -2,6 +2,8 @@ import { loadPyodide, PyodideInterface } from "pyodide";
 import { useEffect, useState } from "react";
 import { Textarea } from "../textarea";
 import { Button } from "../button";
+import { Loader2 } from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../card";
 
 function PythonCodeRunner() {
   const [pyodide, setPyodide] = useState<PyodideInterface | null>(null);
@@ -9,60 +11,73 @@ function PythonCodeRunner() {
   const [codeInput, setCodeInput] = useState<string>("");
   const [printOutput, setPrintOutput] = useState<string | null>(null);
 
-  //   useEffect(() => {
-  //     if (typeof window !== "undefined") {
-  //       loadPyodide({
-  //         indexURL: "https://cdn.jsdelivr.net/pyodide/v0.27.1/full",
-  //         stderr: (text) => console.log(text),
-  //         stdout: (text) => console.log(text),
-  //       })
-  //         .then((result) => {
-  //           setPyodide(result);
-  //           result.runPython("print(2+2)");
-  //         })
-  //         .catch((error) => {
-  //           console.error("Error loading Pyodide:", error);
-  //         });
-  //     }
-  //   }, []);
-
-  const runCode = async () => {
+  //Loads Pyodide when the component mounts
+  useEffect(() => {
     if (typeof window !== "undefined") {
       loadPyodide({
         indexURL: "https://cdn.jsdelivr.net/pyodide/v0.27.1/full",
-        stderr: (text) => setPrintOutput(text),
-        stdout: (text) => setPrintOutput(text),
+        stderr: (text) => console.log(text),
+        stdout: (text) => printHandler(text),
       })
         .then((result) => {
           setPyodide(result);
-          const output = result.runPython(codeInput);
-          setOutput(output);
-          console.log(output);
-          console.log(printOutput);
         })
         .catch((error) => {
           console.error("Error loading Pyodide:", error);
         });
     }
+  }, []);
+
+  const printHandler = (text: string) => {
+    setPrintOutput((prev) => (prev ? prev + "\n" + text : text));
+  };
+
+  const runCode = () => {
+    setPrintOutput("");
+    if (pyodide) {
+      const output = pyodide.runPython(codeInput);
+      setOutput(output);
+    }
+  };
+
+  const LoaderButton = () => {
+    return (
+      <Button disabled className="w-36">
+        <Loader2 className="animate-spin" />
+        Loading...
+      </Button>
+    );
   };
 
   return (
-    <div>
-      Pyodide Loaded: {pyodide ? "Yes" : "No"}
-      <Textarea
-        placeholder="Enter Python code here"
-        value={codeInput}
-        onChange={(e) => setCodeInput(e.target.value)}
-      />
-      <Button onClick={() => runCode()}>Run Code</Button>
-      {output !== null && (
-        <div>
-          <h2>Output:</h2>
-          <pre>{output}</pre>
-          <pre>{printOutput}</pre>
+    <Card className="mx-auto w-1/2">
+      <CardHeader>
+        <CardTitle>Python Code Runner</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Textarea
+          className="h-80"
+          placeholder="Enter Python code here"
+          value={codeInput}
+          onChange={(e) => setCodeInput(e.target.value)}
+        />
+      </CardContent>
+      <CardFooter className="flex flex-col items-start gap-4">
+        {pyodide ? (
+          <Button className="w-36" onClick={() => runCode()}>
+            Run Code
+          </Button>
+        ) : (
+          <LoaderButton />
+        )}
+        <div className="bg-gray-100 p-4 rounded-md w-full overflow-x-auto">
+          <pre>
+            {output}
+            {printOutput}
+          </pre>
         </div>
-      )}
-    </div>
+      </CardFooter>
+    </Card>
   );
 }
 
