@@ -1,19 +1,18 @@
 import { Link } from "@remix-run/react";
 import { House } from "lucide-react";
-import { Task } from "~/types/types";
+import { Assignment, Task } from "~/types/types";
 import { Separator } from "../ui/separator";
 
 interface SidebarProps {
-  assignmentTitle: string;
+  assignment: Assignment;
   tasks: Task[];
 }
 
-const Sidebar = ({ tasks, assignmentTitle }: SidebarProps) => {
-  console.log(assignmentTitle);
-
+const Sidebar = ({ tasks, assignment }: SidebarProps) => {
   return (
     <div className="w-1/5 bg-gray-100 border-r border-gray-300 p-4">
-      <h2 className="text-2xl font-bold mb-4">{assignmentTitle}</h2>
+      <h2 className="text-2xl font-bold mb-1">{assignment.title}</h2>
+      <p className="font-extralight text-sm">{assignment.description}</p>
       <Separator className="my-4 h-[2px]" />
       <nav className="space-y-4">
         {tasks.map((task) => (
@@ -26,7 +25,7 @@ const Sidebar = ({ tasks, assignmentTitle }: SidebarProps) => {
           </Link>
         ))}
       </nav>
-      {tasks.length === 0 && <p>No tasks found</p>}
+      {tasks.length === 0 && <p className="font-light">No tasks found</p>}
       <div className="fixed bottom-0 left-0 w-1/5 p-4">
         <Separator className="my-4 h-[2px]" />
         <Link
