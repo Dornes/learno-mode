@@ -26,6 +26,7 @@ const Sidebar = ({ tasks, assignmentTitle }: SidebarProps) => {
           </Link>
         ))}
       </nav>
+      {tasks.length === 0 && <p>No tasks found</p>}
       <div className="fixed bottom-0 left-0 w-1/5 p-4">
         <Separator className="my-4 h-[2px]" />
         <Link
