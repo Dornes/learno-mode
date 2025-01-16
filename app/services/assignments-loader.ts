@@ -14,5 +14,5 @@ export const assignmentsLoader: LoaderFunction = async () => {
         a.title.localeCompare(b.title)
       )
     : [];
-  return { data: sortedAssignments as Assignment[] };
+  return { assignments: sortedAssignments as Assignment[] };
 };
