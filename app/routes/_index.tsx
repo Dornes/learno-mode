@@ -24,7 +24,7 @@ export default function Index() {
 
   return (
     <>
-      <div className="w-4/5 md:w-3/5 2xl:w-2/5 mx-auto mt-10">
+      <div className="w-4/5 md:w-3/5 mx-auto mt-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {assignments.map((assignment: Assignment) => (
             <div key={assignment.id}>
