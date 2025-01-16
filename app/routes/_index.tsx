@@ -29,23 +29,29 @@ export default function Index() {
           {assignments.map((assignment: Assignment) => (
             <div key={assignment.id}>
               <Link to={`/assignment.${assignment.id}`}>
-                <Card className="items-center hover:bg-gray-50">
+                <Card className="items-center hover:bg-gray-50 h-44 overflow-hidden">
                   <CardHeader>
                     <div className="flex flex-row space-x-2">
-                      <CardTitle>{assignment.title}</CardTitle>
+                      <CardTitle className="truncate">
+                        {assignment.title}
+                      </CardTitle>
                       <CircleCheckBig
                         className={clsx("w-6 h-6 flex-shrink-0 flex-grow-0", {
                           "text-green-500": assignment.all_tasks_approved,
                         })}
                       />
                     </div>
-                    <CardDescription>{assignment.description}</CardDescription>
+                    <CardDescription className="truncate">
+                      {assignment.description}
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex flex-col justify-center">
                     <Progress
                       value={
-                        100 *
-                        (assignment.approved_tasks / assignment.total_tasks)
+                        assignment.total_tasks !== 0
+                          ? 100 *
+                            (assignment.approved_tasks / assignment.total_tasks)
+                          : 0
                       }
                     />
                     <p className="mt-1 font-extralight">
