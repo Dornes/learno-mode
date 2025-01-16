@@ -20,7 +20,7 @@ export const meta: MetaFunction = () => {
 export const loader: LoaderFunction = assignmentsLoader;
 
 export default function Index() {
-  const { data: assignments } = useLoaderData<typeof loader>();
+  const { assignments } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -28,7 +28,7 @@ export default function Index() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {assignments.map((assignment: Assignment) => (
             <div key={assignment.id}>
-              <Link to={`/assignment.${assignment.id}`}>
+              <Link to={`/assignment/${assignment.id}`}>
                 <Card className="items-center hover:bg-gray-50 h-44 overflow-hidden">
                   <CardHeader>
                     <div className="flex flex-row space-x-2">

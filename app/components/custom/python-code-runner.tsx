@@ -1,9 +1,15 @@
 import { loadPyodide, PyodideInterface } from "pyodide";
 import { useEffect, useState } from "react";
-import { Textarea } from "../textarea";
-import { Button } from "../button";
+import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 
 function PythonCodeRunner() {
   const [pyodide, setPyodide] = useState<PyodideInterface | null>(null);

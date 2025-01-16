@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Button } from "../button";
 import { BotMessageSquare, X } from "lucide-react";
-import { Card, CardFooter, CardHeader, CardTitle } from "../card";
-import { Input } from "../input";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Card, CardHeader, CardTitle, CardFooter } from "../ui/card";
 
 const ChatButton = () => {
   const [open, setOpen] = useState(false);
