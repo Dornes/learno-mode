@@ -7,12 +7,10 @@ export const loader: LoaderFunction = assignmentLoader;
 
 export default function Assignment() {
   const { assignment, tasks } = useLoaderData<typeof loader>();
-  console.log(assignment);
 
   return (
     <div className="flex h-screen">
       <Sidebar assignment={assignment} tasks={tasks} />
-
       <div className="flex-1 p-6">
         <Outlet />
       </div>

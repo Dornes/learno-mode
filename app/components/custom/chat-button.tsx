@@ -3,17 +3,13 @@ import { BotMessageSquare, X } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Card, CardHeader, CardTitle, CardFooter } from "../ui/card";
+import { Form, useActionData } from "@remix-run/react";
+import { useEffect } from "react";
 
 const ChatButton = () => {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-
-  // Placeholder function for now
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Message sent: ", input);
-    setInput("");
-  };
+  const actionData = useActionData<string>();
 
   // Placeholder function for now
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,16 +42,25 @@ const ChatButton = () => {
             </Button>
           </div>
         </CardHeader>
+        {actionData && (
+          <div className="p-4 bg-gray-100">
+            <p className="text-sm text-gray-600">AI Response:</p>
+            <p className="text-lg">{actionData}</p>
+          </div>
+        )}
         <CardFooter>
-          <form onSubmit={handleSubmit} className="flex w-full space-x-2">
+          <Form className="flex w-full space-x-2" method="post">
             <Input
+              name="message"
               value={input}
               placeholder="Type your message..."
               className="flex-grow"
               onChange={handleInput}
             />
-            <Button type="submit">Send</Button>
-          </form>
+            <Button type="submit" value="help-chat" name="action">
+              Send
+            </Button>
+          </Form>
         </CardFooter>
       </Card>
     </div>

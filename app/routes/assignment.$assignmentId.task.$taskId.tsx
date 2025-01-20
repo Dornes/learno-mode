@@ -1,10 +1,12 @@
-import { LoaderFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { useActionData, useLoaderData } from "@remix-run/react";
 import ChatButton from "~/components/custom/chat-button";
 import PythonCodeRunner from "~/components/custom/python-code-runner";
+import { taskAction } from "~/services/task-action";
 import { taskLoader } from "~/services/task-loader";
 
 export const loader: LoaderFunction = taskLoader;
+export const action: ActionFunction = taskAction;
 
 export default function Task() {
   const { task } = useLoaderData<typeof loader>();
