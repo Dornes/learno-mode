@@ -10,11 +10,16 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { Form } from "@remix-run/react";
 
-function PythonCodeRunner() {
+interface PythonCodeRunnerProps {
+  solution: string;
+}
+
+function PythonCodeRunner({ solution }: PythonCodeRunnerProps) {
   const [pyodide, setPyodide] = useState<PyodideInterface | null>(null);
   const [output, setOutput] = useState<string | null>(null);
-  const [codeInput, setCodeInput] = useState<string>("");
+  const [codeInput, setCodeInput] = useState<string>(solution);
   const [printOutput, setPrintOutput] = useState<string | null>(null);
 
   //Loads Pyodide when the component mounts
@@ -56,34 +61,43 @@ function PythonCodeRunner() {
   };
 
   return (
-    <Card className="mx-auto w-1/2">
-      <CardHeader>
-        <CardTitle>Python Code Runner</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Textarea
-          className="h-80"
-          placeholder="Enter Python code here"
-          value={codeInput}
-          onChange={(e) => setCodeInput(e.target.value)}
-        />
-      </CardContent>
-      <CardFooter className="flex flex-col items-start gap-4">
-        {pyodide ? (
-          <Button className="w-36" onClick={() => runCode()}>
-            Run Code
-          </Button>
-        ) : (
-          <LoaderButton />
-        )}
-        <div className="bg-gray-100 p-4 rounded-md w-full overflow-x-auto">
-          <pre>
-            {output}
-            {printOutput}
-          </pre>
-        </div>
-      </CardFooter>
-    </Card>
+    <Form method="POST">
+      <Card className="mx-auto w-1/2">
+        <CardHeader>
+          <CardTitle>Python Code Runner</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Textarea
+            name="code"
+            className="h-80"
+            placeholder="Enter Python code here"
+            defaultValue={solution}
+            value={codeInput}
+            onChange={(e) => setCodeInput(e.target.value)}
+          />
+        </CardContent>
+        <CardFooter className="flex flex-col items-start gap-4">
+          <div className="flex flex-row w-full">
+            {pyodide ? (
+              <Button className="w-36" onClick={() => runCode()}>
+                Run Code
+              </Button>
+            ) : (
+              <LoaderButton />
+            )}
+            <Button name="action" value="code" className="ml-auto">
+              Evaluate
+            </Button>
+          </div>
+          <div className="bg-gray-100 p-4 rounded-md w-full overflow-x-auto">
+            <pre>
+              {output}
+              {printOutput}
+            </pre>
+          </div>
+        </CardFooter>
+      </Card>
+    </Form>
   );
 }
 

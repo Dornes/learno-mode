@@ -1,5 +1,5 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { useActionData, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import ChatButton from "~/components/custom/chat-button";
 import PythonCodeRunner from "~/components/custom/python-code-runner";
 import { taskAction } from "~/services/task-action";
@@ -15,7 +15,7 @@ export default function Task() {
     <div>
       <h1 className="text-2xl font-bold">{task.title}</h1>
       <p className="mt-4">{task.description}</p>
-      <PythonCodeRunner />
+      <PythonCodeRunner solution={task.solution} />
       <ChatButton />
     </div>
   );
