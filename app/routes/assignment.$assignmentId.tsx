@@ -7,7 +7,6 @@ export const loader: LoaderFunction = assignmentLoader;
 
 export default function Assignment() {
   const { assignment, tasks } = useLoaderData<typeof loader>();
-  console.log(assignment);
 
   return (
     <div className="flex h-screen">

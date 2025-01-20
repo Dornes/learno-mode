@@ -9,8 +9,6 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ tasks, assignmentTitle }: SidebarProps) => {
-  console.log(assignmentTitle);
-
   return (
     <div className="w-1/5 bg-gray-100 border-r border-gray-300 p-4">
       <h2 className="text-2xl font-bold mb-4">{assignmentTitle}</h2>
