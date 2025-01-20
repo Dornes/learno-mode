@@ -10,8 +10,7 @@ export default function Assignment() {
 
   return (
     <div className="flex h-screen">
-      <Sidebar assignmentTitle={assignment.title} tasks={tasks} />
-
+      <Sidebar assignment={assignment} tasks={tasks} />
       <div className="flex-1 p-6">
         <Outlet />
       </div>
