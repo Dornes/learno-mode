@@ -22,9 +22,8 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
   const [output, setOutput] = useState<string | null>(null);
   const [codeInput, setCodeInput] = useState<string>(solution);
   const [printOutput, setPrintOutput] = useState<string | null>(null);
-  const [testCode, setTestCode] = useState<string>(solution + "\n" + test_code);
   const [isTesting, setIsTesting] = useState<boolean>(false);
-  const [evaluationDisabled, setEvaluationDisabled] = useState<boolean>(true);
+  const [evaluationAllowed, setEvaluationAllowed] = useState<boolean>(false);
 
   //Loads Pyodide when the component mounts
   useEffect(() => {
@@ -41,10 +40,10 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
           console.error("Error loading Pyodide:", error);
         });
     }
-    setEvaluationDisabled(true);
+    setEvaluationAllowed(false);
     if (isTesting) {
       if (printOutput === "All test cases passed!") {
-        setEvaluationDisabled(false);
+        setEvaluationAllowed(true);
       }
     }
   }, [isTesting, printOutput]);
@@ -53,23 +52,20 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
     setPrintOutput((prev) => (prev ? prev + "\n" + text : text));
   };
 
-  const runCode = (input: string) => {
+  const runCode = (codeInput: string) => {
     setPrintOutput("");
+    setOutput(pyodide!.runPython(codeInput));
+  };
+
+  const handleRunClick = (codeInput: string) => {
     setIsTesting(false);
-    if (pyodide) {
-      const output = pyodide.runPython(input);
-      setOutput(output);
-    }
+    runCode(codeInput);
   };
 
-  const handleChange = (input: string) => {
-    setCodeInput(input);
-    setTestCode(input + "\n" + test_code);
-  };
-
-  const handleTestClick = (input: string) => {
-    runCode(input);
+  const handleTestClick = (codeInput: string) => {
     setIsTesting(true);
+    setOutput("");
+    runCode(codeInput + "\n\n" + test_code);
   };
 
   const LoaderButton = () => {
@@ -93,25 +89,23 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
             className="h-80"
             placeholder="Enter Python code here"
             value={codeInput}
-            onChange={(e) => handleChange(e.target.value)}
+            onChange={(e) => setCodeInput(e.target.value)}
           />
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-4">
           <div className="flex flex-row w-full">
             {pyodide ? (
-              <Button onClick={() => runCode(codeInput)}>Run Code</Button>
+              <Button type="button" onClick={() => handleRunClick(codeInput)}>
+                Run Code
+              </Button>
             ) : (
               <LoaderButton />
             )}
             <div className="ml-auto space-x-2">
-              <Button
-                name="action"
-                value="test"
-                onClick={() => handleTestClick(testCode)}
-              >
+              <Button type="button" onClick={() => handleTestClick(codeInput)}>
                 Test
               </Button>
-              <Button name="action" value="code" disabled={evaluationDisabled}>
+              <Button name="action" value="code" disabled={!evaluationAllowed}>
                 Evaluate
               </Button>
             </div>
