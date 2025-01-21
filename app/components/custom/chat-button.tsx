@@ -12,6 +12,7 @@ import {
 import { Form, useActionData } from "@remix-run/react";
 import { Message } from "openai/src/resources/beta/threads/messages.js";
 import { ScrollArea } from "../ui/scroll-area";
+import MessageLoading from "./message-loading";
 
 interface ActionData {
   messagesData: Message[];
@@ -21,6 +22,7 @@ interface ActionData {
 const ChatButton = () => {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [currentMessage, setCurrentMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const actionData = useActionData<ActionData>();
 
@@ -30,9 +32,10 @@ const ChatButton = () => {
     }
   }, [actionData]);
 
-  // Placeholder function for now
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    setCurrentMessage(input); // Set the current message to the input value
+    setInput(""); // Clear the input field
+    setIsLoading(true); // Show the loading indicator
   };
 
   return (
@@ -65,7 +68,7 @@ const ChatButton = () => {
             {actionData?.messagesData?.map((message) => (
               <div
                 key={message?.id}
-                className={`mb-4 ${
+                className={`mb-4 pr-3 ${
                   message?.role == "user" ? "text-right" : "text-left"
                 }`}
               >
@@ -80,27 +83,33 @@ const ChatButton = () => {
                 </span>
               </div>
             ))}
-            {isLoading && (
-              <div className="inline-block p-2 rounded-lg bg-gray-200">...</div>
-            )}
+            {isLoading ? (
+              <div className="text-right">
+                <span className="inline-block p-2 rounded-lg bg-blue-500 text-white">
+                  {currentMessage}
+                </span>
+                <div className="text-left">
+                  <MessageLoading />
+                </div>
+              </div>
+            ) : null}
           </ScrollArea>
         </CardContent>
         <CardFooter>
-          <Form className="flex w-full space-x-2" method="post">
+          <Form
+            className="flex w-full space-x-2"
+            method="post"
+            onSubmit={handleSubmit}
+          >
             <Input
               name="message"
-              value={input}
               placeholder="Type your message..."
               className="flex-grow"
-              onChange={handleInput}
+              value={input || ""}
+              onChange={(e) => setInput(e.target.value)} // Update input state on change
             />
             <input type="hidden" name="threadId" value={actionData?.threadId} />
-            <Button
-              type="submit"
-              value="help-chat"
-              name="action"
-              onClick={() => setIsLoading(true)}
-            >
+            <Button type="submit" value="help-chat" name="action">
               Send
             </Button>
           </Form>

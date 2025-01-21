@@ -31,7 +31,7 @@ const generateAiResponse = async (formData: FormData) => {
 
     while (statuses.includes(run.status)) {
       run = await openai.beta.threads.runs.retrieve(threadId, run.id);
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 20));
     }
 
     console.log(run.status);
