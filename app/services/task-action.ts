@@ -2,7 +2,11 @@ import { ActionFunction, redirect } from "@remix-run/node";
 import { supabaseClient as supabase } from "~/auth/supabase.server";
 import { OpenAI } from "openai";
 
-const saveCodeSubmission = async (formData: FormData, taskId: number) => {
+const saveCodeSubmission = async (
+  formData: FormData,
+  taskId: number,
+  evaluate: boolean
+) => {
   const code = formData.get("code") as string;
   if (!code) {
     return new Response("No message provided", { status: 400 });
@@ -14,7 +18,7 @@ const saveCodeSubmission = async (formData: FormData, taskId: number) => {
         solution: code,
       })
       .eq("id", taskId);
-    return redirect(`/evaluation/${taskId}`);
+    return evaluate ? redirect(`/evaluation/${taskId}`) : null;
   } catch (error) {
     if (error instanceof Error) {
       return Response.json({ error: error.message }, { status: 500 });
@@ -56,8 +60,10 @@ export const taskAction: ActionFunction = async ({ request, params }) => {
   }
   const formData = await request.formData();
   const actionType = formData.get("action") as string;
-  if (actionType === "code") {
-    return saveCodeSubmission(formData, taskId);
+  if (actionType === "evaluate") {
+    return saveCodeSubmission(formData, taskId, true);
+  } else if (actionType === "save") {
+    return saveCodeSubmission(formData, taskId, false);
   } else if (actionType === "help-chat") {
     return generateAiResponse(formData);
   }

@@ -70,7 +70,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
 
   const LoaderButton = () => {
     return (
-      <Button disabled className="w-36">
+      <Button disabled>
         <Loader2 className="animate-spin" />
         Loading...
       </Button>
@@ -95,17 +95,30 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
         <CardFooter className="flex flex-col items-start gap-4">
           <div className="flex flex-row w-full">
             {pyodide ? (
-              <Button type="button" onClick={() => handleRunClick(codeInput)}>
+              <Button
+                name="action"
+                value="save"
+                onClick={() => handleRunClick(codeInput)}
+              >
                 Run Code
               </Button>
             ) : (
               <LoaderButton />
             )}
             <div className="ml-auto space-x-2">
-              <Button type="button" onClick={() => handleTestClick(codeInput)}>
+              <Button
+                name="action"
+                value="save"
+                disabled={!pyodide}
+                onClick={() => handleTestClick(codeInput)}
+              >
                 Test
               </Button>
-              <Button name="action" value="code" disabled={!evaluationAllowed}>
+              <Button
+                name="action"
+                value="evaluate"
+                disabled={!evaluationAllowed}
+              >
                 Evaluate
               </Button>
             </div>
