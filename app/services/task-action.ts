@@ -3,6 +3,7 @@ import { OpenAI } from "openai";
 
 const generateAiResponse = async (formData: FormData) => {
   const userMessage = formData.get("message") as string;
+  const threadIdInput = formData.get("threadId") as string;
 
   if (!userMessage) {
     return new Response("No message provided", { status: 400 });
@@ -10,33 +11,38 @@ const generateAiResponse = async (formData: FormData) => {
 
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   try {
-    const thread = await openai.beta.threads.create();
+    let threadId = threadIdInput ?? "";
 
-    const message = await openai.beta.threads.messages.create(thread.id, {
+    if (threadId == "") {
+      const thread = await openai.beta.threads.create();
+      threadId = thread.id;
+    }
+
+    const message = await openai.beta.threads.messages.create(threadId, {
       role: "user",
       content: userMessage,
     });
 
-    let run = await openai.beta.threads.runs.create(thread.id, {
+    let run = await openai.beta.threads.runs.create(threadId, {
       assistant_id: process.env.ASSISTANT_ID || "",
     });
 
     const statuses = ["requires_action", "in_progress", "cancelling", "queued"];
 
     while (statuses.includes(run.status)) {
-      run = await openai.beta.threads.runs.retrieve(thread.id, run.id);
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      run = await openai.beta.threads.runs.retrieve(threadId, run.id);
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
     console.log(run.status);
 
     if (run.status === "completed") {
-      const messages = await openai.beta.threads.messages.list(thread.id);
-      const messagesData = messages.data;
+      const messages = await openai.beta.threads.messages.list(threadId);
+      const messagesData = messages.data.reverse();
       messagesData.forEach((message) => {
         console.log(message.content);
       });
-      return Response.json(messagesData, { status: 200 });
+      return Response.json({ messagesData, threadId }, { status: 200 });
     } else {
       return Response.json({ error: "AI response failed" }, { status: 500 });
     }
