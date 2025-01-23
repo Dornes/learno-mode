@@ -27,12 +27,10 @@ const ChatButton = () => {
   const actionData = useActionData<ActionData>();
 
   useEffect(() => {
-    if (actionData) {
-      setIsLoading(false);
-    }
+    setIsLoading(false);
   }, [actionData]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = () => {
     setCurrentMessage(input); // Set the current message to the input value
     setInput(""); // Clear the input field
     setIsLoading(true); // Show the loading indicator

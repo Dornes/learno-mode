@@ -18,7 +18,7 @@ const generateAiResponse = async (formData: FormData) => {
       threadId = thread.id;
     }
 
-    const message = await openai.beta.threads.messages.create(threadId, {
+    await openai.beta.threads.messages.create(threadId, {
       role: "user",
       content: userMessage,
     });
@@ -34,14 +34,9 @@ const generateAiResponse = async (formData: FormData) => {
       await new Promise((resolve) => setTimeout(resolve, 20));
     }
 
-    console.log(run.status);
-
     if (run.status === "completed") {
       const messages = await openai.beta.threads.messages.list(threadId);
       const messagesData = messages.data.reverse();
-      messagesData.forEach((message) => {
-        console.log(message.content);
-      });
       return Response.json({ messagesData, threadId }, { status: 200 });
     } else {
       return Response.json({ error: "AI response failed" }, { status: 500 });
