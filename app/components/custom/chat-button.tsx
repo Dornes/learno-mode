@@ -10,9 +10,9 @@ import {
   CardContent,
 } from "../ui/card";
 import { Form, useActionData } from "@remix-run/react";
-import { Message } from "openai/src/resources/beta/threads/messages.js";
 import { ScrollArea } from "../ui/scroll-area";
 import MessageLoading from "./message-loading";
+import { Message } from "openai/resources/beta/threads/messages.mjs";
 
 interface ActionData {
   messagesData: Message[];
