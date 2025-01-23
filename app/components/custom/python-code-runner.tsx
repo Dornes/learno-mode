@@ -11,6 +11,10 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Form } from "@remix-run/react";
+import Editor from "react-simple-code-editor";
+import Prism from "prismjs";
+import "prismjs/components/prism-python";
+import "prismjs/themes/prism.css";
 
 interface PythonCodeRunnerProps {
   solution: string;
@@ -24,6 +28,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
   const [printOutput, setPrintOutput] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState<boolean>(false);
   const [evaluationAllowed, setEvaluationAllowed] = useState<boolean>(false);
+  const isClient = typeof window !== "undefined";
 
   //Loads Pyodide when the component mounts
   useEffect(() => {
@@ -79,18 +84,20 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
 
   return (
     <Form method="POST">
-      <Card className="mx-auto w-1/2">
-        <CardHeader>
-          <CardTitle>Python Code Runner</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Textarea
-            name="code"
-            className="h-80"
-            placeholder="Enter Python code here"
-            value={codeInput}
-            onChange={(e) => setCodeInput(e.target.value)}
-          />
+      <Card className="w-3/4">
+        <CardContent className="mt-5">
+          {isClient && (
+            <Editor
+              highlight={(code) =>
+                Prism.highlight(code, Prism.languages.python, "python")
+              }
+              onValueChange={(code) => setCodeInput(code)}
+              value={codeInput}
+              name="code"
+              padding={10}
+              className="h-80 bg-gray-100 rounded-md"
+            />
+          )}
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-4">
           <div className="flex flex-row w-full">
