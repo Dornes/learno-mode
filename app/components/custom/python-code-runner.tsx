@@ -1,15 +1,8 @@
 import { loadPyodide, PyodideInterface } from "pyodide";
 import { useEffect, useState } from "react";
-import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import { Card, CardContent, CardFooter } from "../ui/card";
 import { Form } from "@remix-run/react";
 import Editor from "react-simple-code-editor";
 import Prism from "prismjs";
@@ -84,8 +77,8 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
 
   return (
     <Form method="POST">
-      <Card className="w-3/4">
-        <CardContent className="mt-5">
+      <Card className="w-3/4 border-none shadow-none">
+        <CardContent className="mt-5 p-0">
           {isClient && (
             <Editor
               highlight={(code) =>
@@ -99,7 +92,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
             />
           )}
         </CardContent>
-        <CardFooter className="flex flex-col items-start gap-4">
+        <CardFooter className="flex flex-col items-start gap-4 p-0 mt-2">
           <div className="flex flex-row w-full">
             {pyodide ? (
               <Button
