@@ -16,7 +16,11 @@ export default function Evaluation() {
       <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono w-3/4">
         <code>{task.solution}</code>
       </pre>
-      <EvaluationChat solution={task.solution} />
+      <EvaluationChat
+        solution={task.solution}
+        taskId={task.id}
+        status={task.status}
+      />
     </div>
   );
 }

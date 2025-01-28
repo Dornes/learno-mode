@@ -1,5 +1,5 @@
-import { Form, useActionData, useSubmit } from "@remix-run/react";
-import { Button } from "../ui/button";
+import { Form, Link, useActionData, useSubmit } from "@remix-run/react";
+import { Button, buttonVariants } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import MessageLoading from "./message-loading";
 import { Input } from "../ui/input";
@@ -15,17 +15,29 @@ interface ActionData {
 
 interface EvaluationChatProps {
   solution: string;
+  taskId: number;
+  status: string;
 }
 
-const EvaluationChat = ({ solution }: EvaluationChatProps) => {
+const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
   const [input, setInput] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const actionData = useActionData<ActionData>();
   const submit = useSubmit();
+  const isApproved = status === "APPROVED";
 
   useEffect(() => {
     setIsLoading(false);
+    // Checks if any of the messages contain the word "Approved" and approves the task
+    for (const message of actionData?.messagesData ?? []) {
+      if (message.role === "assistant") {
+        if (message.content[0].text.value.includes("Approved")) {
+          approveTask();
+          break;
+        }
+      }
+    }
   }, [actionData]);
 
   useEffect(() => {
@@ -35,8 +47,16 @@ const EvaluationChat = ({ solution }: EvaluationChatProps) => {
       formData.append("message", solution);
       formData.append("action", "help-chat");
       submit(formData, { method: "post" });
+      setIsLoading(true);
     }
   }, [solution, submit]);
+
+  const approveTask = () => {
+    const formData = new FormData();
+    formData.append("taskId", taskId.toString());
+    formData.append("action", "approve-task");
+    submit(formData, { method: "post" });
+  };
 
   const handleSubmit = () => {
     setCurrentMessage(input); // Set the current message to the input value
@@ -46,86 +66,97 @@ const EvaluationChat = ({ solution }: EvaluationChatProps) => {
 
   const ApprovedMessage = () => {
     return (
-      <div className="text-left">
-        <span className="inline-block p-2 rounded-lg bg-green-500 text-white">
-          Your code has been approved!
-          <CheckCircleIcon className="w-6 h-6 mr-2" />
-        </span>
+      <div className="w-full max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-sm">
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <h1 className="text-2xl font-medium">
+            Good job! The assignment has been approved
+          </h1>
+          <CheckCircleIcon className="w-8 h-8 text-green-600" />
+        </div>
+        <div className="flex justify-center gap-4">
+          <Link to={`/`} className={buttonVariants({ variant: "outline" })}>
+            Take me home!
+          </Link>
+        </div>
       </div>
     );
   };
 
-  return (
-    <div className="flex items-center justify-center h-full">
-      <Card className="fixed bottom-4 p-4 w-3/4">
-        <CardContent className="overflow-hidden">
-          <ScrollArea className="h-[400px]">
-            {actionData?.messagesData?.map((message, index) => {
-              // Check if the message is the first one (solution) by its position or content
-              const isInitialSolution =
-                index === 0 && message?.content[0]?.text.value === solution;
+  if (isApproved) {
+    return <ApprovedMessage />;
+  } else {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Card className="fixed bottom-4 p-4 w-3/4">
+          <CardContent className="overflow-hidden">
+            <ScrollArea className="h-[400px]">
+              {actionData?.messagesData?.map((message, index) => {
+                // Check if the message is the first one (solution) by its position or content
+                const isInitialSolution =
+                  index === 0 && message?.content[0]?.text.value === solution;
 
-              if (isInitialSolution) {
-                return null;
-              }
+                if (isInitialSolution) {
+                  return null;
+                }
 
-              return (
-                <div
-                  key={message?.id}
-                  className={`mb-4 pr-3 ${
-                    message?.role === "user" ? "text-right" : "text-left"
-                  }`}
-                >
-                  <span
-                    className={`inline-block p-2 rounded-lg ${
-                      message?.role === "user"
-                        ? `bg-blue-500 text-white`
-                        : `bg-gray-200 text-black`
+                return (
+                  <div
+                    key={message?.id}
+                    className={`mb-4 pr-3 ${
+                      message?.role === "user" ? "text-right" : "text-left"
                     }`}
                   >
-                    {message?.content[0].text.value.includes("Approved") ? (
-                      <ApprovedMessage />
-                    ) : (
-                      message?.content[0].text.value
-                    )}
+                    <span
+                      className={`inline-block p-2 rounded-lg ${
+                        message?.role === "user"
+                          ? `bg-blue-500 text-white`
+                          : `bg-gray-200 text-black`
+                      }`}
+                    >
+                      {message?.content[0].text.value}
+                    </span>
+                  </div>
+                );
+              })}
+              {isLoading ? (
+                <div className="text-right">
+                  <span className="inline-block p-2 rounded-lg bg-blue-500 text-white">
+                    {currentMessage}
                   </span>
+                  <div className="text-left">
+                    <MessageLoading />
+                  </div>
                 </div>
-              );
-            })}
-            {isLoading ? (
-              <div className="text-right">
-                <span className="inline-block p-2 rounded-lg bg-blue-500 text-white">
-                  {currentMessage}
-                </span>
-                <div className="text-left">
-                  <MessageLoading />
-                </div>
-              </div>
-            ) : null}
-          </ScrollArea>
-        </CardContent>
-        <CardFooter>
-          <Form
-            className="flex w-full space-x-2"
-            method="post"
-            onSubmit={handleSubmit}
-          >
-            <Input
-              name="message"
-              placeholder="Type your message..."
-              className="flex-grow"
-              value={input || ""}
-              onChange={(e) => setInput(e.target.value)} // Update input state on change
-            />
-            <input type="hidden" name="threadId" value={actionData?.threadId} />
-            <Button type="submit" value="help-chat" name="action">
-              Send
-            </Button>
-          </Form>
-        </CardFooter>
-      </Card>
-    </div>
-  );
+              ) : null}
+            </ScrollArea>
+          </CardContent>
+          <CardFooter>
+            <Form
+              className="flex w-full space-x-2"
+              method="post"
+              onSubmit={handleSubmit}
+            >
+              <Input
+                name="message"
+                placeholder="Type your message..."
+                className="flex-grow"
+                value={input || ""}
+                onChange={(e) => setInput(e.target.value)} // Update input state on change
+              />
+              <input
+                type="hidden"
+                name="threadId"
+                value={actionData?.threadId}
+              />
+              <Button type="submit" value="help-chat" name="action">
+                Send
+              </Button>
+            </Form>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
 };
 
 export default EvaluationChat;
