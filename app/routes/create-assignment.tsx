@@ -11,17 +11,21 @@ const CreateAssignment = () => {
   return (
     <div className="w-4/5 md:w-3/5 mx-auto mt-10 space-y-2">
       <Form method="post">
-        <TitleInput
-          name="assignmentTitle"
-          maxLength={64}
-          placeholder="Assignment title"
-          defaultValue={"Untitled assignment"}
-        />
-        <Input
-          name="assignmentDescription"
-          placeholder="Assignment description"
-        />
-        <Button type="submit">Create</Button>
+        <div className="mb-10 space-y-4">
+          <TitleInput
+            name="assignmentTitle"
+            maxLength={64}
+            placeholder="Assignment title"
+          />
+          <div className="space-y-1">
+            <p className="text-gray-500 text-sm">Assignment description</p>
+            <Input
+              name="assignmentDescription"
+              placeholder="Assignment description"
+            />
+          </div>
+          <Button type="submit">Create assignment</Button>
+        </div>
       </Form>
     </div>
   );

@@ -20,5 +20,7 @@ export const createAssignmentAction: ActionFunction = async ({ request }) => {
       { status: 400 }
     );
   }
-  return redirect(`/edit-assignment/${newAssignment.id}`);
+  return redirect(
+    `/edit-assignment/${newAssignment.id}?message=Assignment successfully created.`
+  );
 };

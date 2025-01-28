@@ -14,7 +14,7 @@ const TitleInput = React.forwardRef<HTMLInputElement, TitleInputProps>(
           className
         )}
         ref={ref}
-        defaultValue="Untitled BDR"
+        defaultValue="Untitled Assignment"
         {...props}
       />
     );
