@@ -23,6 +23,7 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
   const [input, setInput] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [approvalMessage, setApprovalMessage] = useState("");
   const actionData = useActionData<ActionData>();
   const submit = useSubmit();
   const isApproved = status === "APPROVED";
@@ -32,7 +33,8 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
     // Checks if any of the messages contain the word "Approved" and approves the task
     for (const message of actionData?.messagesData ?? []) {
       if (message.role === "assistant") {
-        if (message.content[0].text.value.includes("Approved")) {
+        if (message.content[0].text.value.includes("I approve this task")) {
+          setApprovalMessage(message.content[0].text.value);
           approveTask();
           break;
         }
@@ -67,10 +69,11 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
   const ApprovedMessage = () => {
     return (
       <div className="w-full max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-sm">
-        <div className="flex items-center justify-center gap-3 mb-6">
+        <div className="flex items-center justify-center gap-3 mb-6 flex-col">
           <h1 className="text-2xl font-medium">
-            Good job! The assignment has been approved
+            Good job! The task has been approved
           </h1>
+          <p> {approvalMessage.split("I approve this task")[1]}</p>
           <CheckCircleIcon className="w-8 h-8 text-green-600" />
         </div>
         <div className="flex justify-center gap-4">
