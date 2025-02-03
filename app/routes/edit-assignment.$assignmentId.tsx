@@ -129,6 +129,7 @@ const EditAssignment = () => {
                 placeholder="Task title"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
+                required
               />
               <Button type="submit" name="action" value="createTask">
                 Create task
