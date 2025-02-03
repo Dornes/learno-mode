@@ -8,7 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { TitleInput } from "~/components/custom/form/title-input";
-import TaskForm from "~/components/custom/task-form";
+import TaskForm from "~/components/custom/form/task-form";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Separator } from "~/components/ui/separator";
@@ -26,6 +26,15 @@ const EditAssignment = () => {
   const [searchParams] = useSearchParams();
   const message = searchParams.get("message");
   const navigate = useNavigate();
+
+  const handleConfirm = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    message: string
+  ) => {
+    if (!window.confirm(message)) {
+      event.preventDefault();
+    }
+  };
 
   useEffect(() => {
     if (message) {
@@ -60,9 +69,25 @@ const EditAssignment = () => {
               defaultValue={assignment?.description || ""}
             />
           </div>
-          <Button type="submit" name="action" value="editAssignment">
-            Update assignment
-          </Button>
+          <div className="space-x-2">
+            <Button type="submit" name="action" value="editAssignment">
+              Update assignment
+            </Button>
+            <Button
+              type="submit"
+              name="action"
+              value="deleteAssignment"
+              className="bg-red-500 hover:bg-red-600"
+              onClick={(event) =>
+                handleConfirm(
+                  event,
+                  "Are you sure you want to delete this assignment? This will delete all associated tasks. ;O"
+                )
+              }
+            >
+              Delete assignment
+            </Button>
+          </div>
         </div>
       </Form>
       <Tabs defaultValue="tasks">

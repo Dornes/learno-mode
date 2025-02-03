@@ -1,5 +1,10 @@
 import { LoaderFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import {
+  Link,
+  useLoaderData,
+  useNavigate,
+  useSearchParams,
+} from "@remix-run/react";
 import {
   Card,
   CardHeader,
@@ -11,11 +16,26 @@ import { assignmentsLoader } from "~/services/assignments-loader";
 import { Assignment } from "~/types/types";
 import { Drill } from "lucide-react";
 import { Button } from "~/components/ui/button";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 export const loader: LoaderFunction = assignmentsLoader;
 
 export default function Index() {
   const { assignments } = useLoaderData<typeof loader>();
+  const [searchParams] = useSearchParams();
+  const message = searchParams.get("message");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (message) {
+      toast.info(message, {
+        //setting an id prevents duplicate toasts
+        toastId: message,
+      });
+      navigate("./");
+    }
+  }, [message, navigate]);
 
   return (
     <>

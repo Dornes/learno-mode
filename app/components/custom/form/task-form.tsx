@@ -1,14 +1,14 @@
 import { Form } from "@remix-run/react";
 import { useState } from "react";
-import { Input } from "../ui/input";
+import { Input } from "../../ui/input";
 import { Task } from "~/types/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "../ui/collapsible";
-import { Button } from "../ui/button";
+} from "../../ui/collapsible";
+import { Button } from "../../ui/button";
 
 interface TaskFormProps {
   task: Task;
@@ -16,6 +16,15 @@ interface TaskFormProps {
 
 const TaskForm = ({ task }: TaskFormProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const handleConfirm = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    message: string
+  ) => {
+    if (!window.confirm(message)) {
+      event.preventDefault();
+    }
+  };
 
   return (
     <div className="my-4">
@@ -53,9 +62,25 @@ const TaskForm = ({ task }: TaskFormProps) => {
               defaultValue={task?.test_code || ""}
             />
             <input type="hidden" value={task.id} name="taskId" />
-            <Button type="submit" name="action" value="editTask">
-              Update task
-            </Button>
+            <div className="space-x-2">
+              <Button type="submit" name="action" value="editTask">
+                Update task
+              </Button>
+              <Button
+                type="submit"
+                name="action"
+                value="deleteTask"
+                className="bg-red-500 hover:bg-red-600"
+                onClick={(event) =>
+                  handleConfirm(
+                    event,
+                    "Are you sure you want to delete this task?"
+                  )
+                }
+              >
+                Delete task
+              </Button>
+            </div>
           </Form>
         </CollapsibleContent>
       </Collapsible>
