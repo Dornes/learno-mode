@@ -90,6 +90,23 @@ const approveTask = async (formData: FormData) => {
   }
 };
 
+const rejectTask = async (formData: FormData) => {
+  const taskId = Number(formData.get("taskId"));
+  try {
+    await supabase
+      .from("tasks")
+      .update({
+        status: "NOT_APPROVED",
+      })
+      .eq("id", taskId);
+    return redirect(`/evaluation/${taskId}`);
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json({ error: error.message }, { status: 500 });
+    }
+  }
+};
+
 export const taskAction: ActionFunction = async ({ request, params }) => {
   const taskId = Number(params.taskId);
   if (isNaN(taskId)) {
@@ -105,6 +122,8 @@ export const taskAction: ActionFunction = async ({ request, params }) => {
     return generateAiResponse(formData);
   } else if (actionType === "approve-task") {
     return approveTask(formData);
+  } else if (actionType === "reject-task") {
+    return rejectTask(formData);
   }
   return new Response("Invalid action", { status: 400 });
 };

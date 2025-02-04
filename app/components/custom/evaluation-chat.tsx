@@ -28,7 +28,7 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
   const actionData = useActionData<ActionData>();
   const submit = useSubmit();
   const isApproved = status === "APPROVED";
-  const isNotApproved = status === "NOT_APPROVED";
+  const isRejected = status === "NOT_APPROVED";
 
   useEffect(() => {
     setIsLoading(false);
@@ -42,8 +42,7 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
           setFeedback(feedbackValue);
           approveTask();
           break;
-        }
-        if (
+        } else if (
           message.content[0].text.value.includes(
             "I think you could use a little extra work"
           )
@@ -52,6 +51,7 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
             "I think you could use a little extra work"
           )[1];
           setFeedback(feedbackValue);
+          rejectTask();
           break;
         }
       }
@@ -76,6 +76,13 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
     submit(formData, { method: "post" });
   };
 
+  const rejectTask = () => {
+    const formData = new FormData();
+    formData.append("taskId", taskId.toString());
+    formData.append("action", "reject-task");
+    submit(formData, { method: "post" });
+  };
+
   const handleSubmit = () => {
     setCurrentMessage(input); // Set the current message to the input value
     setInput(""); // Clear the input field
@@ -89,8 +96,27 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
           <h1 className="text-2xl font-medium">
             Good job! The task has been approved
           </h1>
-          <p> {feedback.split("I approve this task")[1]}</p>
+          <p> {feedback}</p>
           <CheckCircleIcon className="w-8 h-8 text-green-600" />
+        </div>
+        <div className="flex justify-center gap-4">
+          <Link to={`/`} className={buttonVariants({ variant: "outline" })}>
+            Take me home!
+          </Link>
+        </div>
+      </div>
+    );
+  };
+
+  const RejectedMessage = () => {
+    return (
+      <div className="w-full max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-sm">
+        <div className="flex items-center justify-center gap-3 mb-6 flex-col">
+          <h1 className="text-2xl font-medium">
+            I think you could use a little extra work
+          </h1>
+          <p> {feedback}</p>
+          <CheckCircleIcon className="w-8 h-8 text-red-600" />
         </div>
         <div className="flex justify-center gap-4">
           <Link to={`/`} className={buttonVariants({ variant: "outline" })}>
@@ -103,6 +129,8 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
 
   if (isApproved) {
     return <ApprovedMessage />;
+  } else if (isRejected) {
+    return <RejectedMessage />;
   } else {
     return (
       <div className="flex items-center justify-center h-full">
