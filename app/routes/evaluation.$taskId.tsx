@@ -20,6 +20,7 @@ export default function Evaluation() {
         solution={task.solution}
         taskId={task.id}
         status={task.status}
+        feedback={task.ai_feedback}
       />
     </div>
   );

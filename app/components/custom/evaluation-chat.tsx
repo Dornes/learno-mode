@@ -18,13 +18,18 @@ interface EvaluationChatProps {
   solution: string;
   taskId: number;
   status: STATUS;
+  feedback?: string;
 }
 
-const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
+const EvaluationChat = ({
+  solution,
+  taskId,
+  status,
+  feedback,
+}: EvaluationChatProps) => {
   const [input, setInput] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [feedback, setFeedback] = useState("");
   const actionData = useActionData<ActionData>();
   const submit = useSubmit();
   const isApproved = status === "APPROVED";
@@ -39,8 +44,7 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
           const feedbackValue = message.content[0].text.value.split(
             "I approve this task"
           )[1];
-          setFeedback(feedbackValue);
-          approveTask();
+          approveTask(feedbackValue);
           break;
         } else if (
           message.content[0].text.value.includes(
@@ -50,8 +54,7 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
           const feedbackValue = message.content[0].text.value.split(
             "I think you could use a little extra work"
           )[1];
-          setFeedback(feedbackValue);
-          rejectTask();
+          rejectTask(feedbackValue);
           break;
         }
       }
@@ -69,16 +72,18 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
     }
   }, [solution, submit]);
 
-  const approveTask = () => {
+  const approveTask = (feedbackValue: string) => {
     const formData = new FormData();
     formData.append("taskId", taskId.toString());
+    formData.append("feedback", feedbackValue);
     formData.append("action", "approve-task");
     submit(formData, { method: "post" });
   };
 
-  const rejectTask = () => {
+  const rejectTask = (feedbackValue: string) => {
     const formData = new FormData();
     formData.append("taskId", taskId.toString());
+    formData.append("feedback", feedbackValue);
     formData.append("action", "reject-task");
     submit(formData, { method: "post" });
   };

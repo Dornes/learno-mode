@@ -75,11 +75,13 @@ const generateAiResponse = async (formData: FormData) => {
 
 const approveTask = async (formData: FormData) => {
   const taskId = Number(formData.get("taskId"));
+  const feedback = formData.get("feedback") as string;
   try {
     await supabase
       .from("tasks")
       .update({
         status: "APPROVED",
+        ai_feedback: feedback,
       })
       .eq("id", taskId);
     return redirect(`/evaluation/${taskId}`);
@@ -92,11 +94,13 @@ const approveTask = async (formData: FormData) => {
 
 const rejectTask = async (formData: FormData) => {
   const taskId = Number(formData.get("taskId"));
+  const feedback = formData.get("feedback") as string;
   try {
     await supabase
       .from("tasks")
       .update({
         status: "NOT_APPROVED",
+        ai_feedback: feedback,
       })
       .eq("id", taskId);
     return redirect(`/evaluation/${taskId}`);
