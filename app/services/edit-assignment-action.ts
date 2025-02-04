@@ -79,8 +79,6 @@ export const editAssignmentAction: ActionFunction = async ({
   params,
 }) => {
   const assignmentId = Number(params.assignmentId);
-  console.log(assignmentId);
-
   if (isNaN(assignmentId)) {
     throw new Error("Invalid assignment ID:" + assignmentId);
   }

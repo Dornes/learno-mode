@@ -16,6 +16,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { assignmentLoader } from "~/services/assignment-loader";
 import { editAssignmentAction } from "~/services/edit-assignment-action";
 import { Task } from "~/types/types";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "~/components/ui/accordion";
 
 export const loader: LoaderFunction = assignmentLoader;
 export const action: ActionFunction = editAssignmentAction;
@@ -112,16 +118,22 @@ const EditAssignment = () => {
             <Separator className="border-t-2" />
           </div>
 
-          {tasks.map((task: Task) => {
-            return (
-              <div key={task.id}>
-                <TaskForm task={task} />
-                <Separator className="border-t-2" />
-              </div>
-            );
-          })}
+          <Accordion type="single" collapsible className="w-full">
+            {tasks.map((task: Task) => {
+              return (
+                <AccordionItem key={task.id} value={task.title}>
+                  <AccordionTrigger className="px-2">
+                    {task.title}
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <TaskForm task={task} />
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
+          </Accordion>
 
-          <Form method="post" className="mt-12 space-y-2 pb-8">
+          <Form method="post" className="mt-8 space-y-2 pb-8">
             <h4>Create new task</h4>
             <div className="flex flex-row space-x-2">
               <Input
