@@ -25,16 +25,14 @@ export default function Index() {
 
   return (
     <>
+      <Link className="fixed bottom-3 left-1/2 text-gray-600" to={"/admin"}>
+        {/* <Button className="bg-gray-700 hover:bg-gray-800"> */}
+        Admin
+        {/* <Drill /> */}
+        {/* </Button> */}
+      </Link>
       <div className="w-4/5 md:w-3/5 mx-auto mt-20">
-        <div className="flex flex-row items-center w-full mb-4">
-          <div className="text-4xl">Learno mode</div>
-          <Link className="ml-auto" to={"/admin"}>
-            <Button className=" bg-amber-400 hover:bg-amber-500">
-              Admin
-              <Drill />
-            </Button>
-          </Link>
-        </div>
+        <h1 className="text-4xl mb-4">Learno mode</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {assignments.map((assignment: Assignment) => (
             <div key={assignment.id}>
