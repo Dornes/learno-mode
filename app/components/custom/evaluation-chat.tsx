@@ -7,6 +7,7 @@ import { Message } from "openai/resources/beta/threads/messages.mjs";
 import { useEffect, useState } from "react";
 import { CheckCircleIcon } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
+import { STATUS } from "~/types/types";
 
 interface ActionData {
   messagesData: Message[];
@@ -16,17 +17,18 @@ interface ActionData {
 interface EvaluationChatProps {
   solution: string;
   taskId: number;
-  status: string;
+  status: STATUS;
 }
 
 const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
   const [input, setInput] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [approvalMessage, setApprovalMessage] = useState("");
+  const [feedback, setFeedback] = useState("");
   const actionData = useActionData<ActionData>();
   const submit = useSubmit();
   const isApproved = status === "APPROVED";
+  const isNotApproved = status === "NOT_APPROVED";
 
   useEffect(() => {
     setIsLoading(false);
@@ -34,8 +36,22 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
     for (const message of actionData?.messagesData ?? []) {
       if (message.role === "assistant") {
         if (message.content[0].text.value.includes("I approve this task")) {
-          setApprovalMessage(message.content[0].text.value);
+          const feedbackValue = message.content[0].text.value.split(
+            "I approve this task"
+          )[1];
+          setFeedback(feedbackValue);
           approveTask();
+          break;
+        }
+        if (
+          message.content[0].text.value.includes(
+            "I think you could use a little extra work"
+          )
+        ) {
+          const feedbackValue = message.content[0].text.value.split(
+            "I think you could use a little extra work"
+          )[1];
+          setFeedback(feedbackValue);
           break;
         }
       }
@@ -73,7 +89,7 @@ const EvaluationChat = ({ solution, taskId, status }: EvaluationChatProps) => {
           <h1 className="text-2xl font-medium">
             Good job! The task has been approved
           </h1>
-          <p> {approvalMessage.split("I approve this task")[1]}</p>
+          <p> {feedback.split("I approve this task")[1]}</p>
           <CheckCircleIcon className="w-8 h-8 text-green-600" />
         </div>
         <div className="flex justify-center gap-4">
