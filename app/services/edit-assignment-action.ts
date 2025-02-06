@@ -54,13 +54,31 @@ const editTask = async (assignmentId: number, formData: FormData) => {
   );
 };
 
+const deleteTask = async (formData: FormData) => {
+  const taskId = formData.get("taskId") as string;
+  const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+  if (error) {
+    throw new Error(`Error deleting task: ${error.message}`);
+  }
+  return redirect(`./?message=Task successfully deleted.`);
+};
+
+const deleteAssignment = async (assignmentId: number) => {
+  const { error } = await supabase
+    .from("assignments")
+    .delete()
+    .eq("id", assignmentId);
+  if (error) {
+    throw new Error(`Error deleting assignment: ${error.message}`);
+  }
+  return redirect(`/admin/?message=Assignment successfully deleted.`);
+};
+
 export const editAssignmentAction: ActionFunction = async ({
   request,
   params,
 }) => {
   const assignmentId = Number(params.assignmentId);
-  console.log(assignmentId);
-
   if (isNaN(assignmentId)) {
     throw new Error("Invalid assignment ID:" + assignmentId);
   }
@@ -73,5 +91,9 @@ export const editAssignmentAction: ActionFunction = async ({
     return createTask(assignmentId, formData);
   } else if (actionType === "editTask") {
     return editTask(assignmentId, formData);
+  } else if (actionType === "deleteTask") {
+    return deleteTask(formData);
+  } else if (actionType === "deleteAssignment") {
+    return deleteAssignment(assignmentId);
   }
 };

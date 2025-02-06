@@ -8,6 +8,15 @@ interface TaskFormProps {
 }
 
 const TaskForm = ({ task }: TaskFormProps) => {
+  const handleConfirm = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    message: string
+  ) => {
+    if (!window.confirm(message)) {
+      event.preventDefault();
+    }
+  };
+
   return (
     <div className="bg-gray-50 p-2">
       <Form method="post" className="space-y-2">
@@ -30,9 +39,22 @@ const TaskForm = ({ task }: TaskFormProps) => {
           defaultValue={task?.test_code || ""}
         />
         <input type="hidden" value={task.id} name="taskId" />
-        <Button type="submit" name="action" value="editTask">
-          Update task
-        </Button>
+        <div className="space-x-2">
+          <Button type="submit" name="action" value="editTask">
+            Update task
+          </Button>
+          <Button
+            type="submit"
+            name="action"
+            value="deleteTask"
+            className="bg-red-500 hover:bg-red-600"
+            onClick={(event) =>
+              handleConfirm(event, "Are you sure you want to delete this task?")
+            }
+          >
+            Delete task
+          </Button>
+        </div>
       </Form>
     </div>
   );

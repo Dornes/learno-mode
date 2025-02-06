@@ -33,6 +33,15 @@ const EditAssignment = () => {
   const message = searchParams.get("message");
   const navigate = useNavigate();
 
+  const handleConfirm = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    message: string
+  ) => {
+    if (!window.confirm(message)) {
+      event.preventDefault();
+    }
+  };
+
   useEffect(() => {
     if (message) {
       toast.info(message, {
@@ -66,9 +75,25 @@ const EditAssignment = () => {
               defaultValue={assignment?.description || ""}
             />
           </div>
-          <Button type="submit" name="action" value="editAssignment">
-            Update assignment
-          </Button>
+          <div className="space-x-2">
+            <Button type="submit" name="action" value="editAssignment">
+              Update assignment
+            </Button>
+            <Button
+              type="submit"
+              name="action"
+              value="deleteAssignment"
+              className="bg-red-500 hover:bg-red-600"
+              onClick={(event) =>
+                handleConfirm(
+                  event,
+                  "Are you sure you want to delete this assignment? This will delete all associated tasks. ;O"
+                )
+              }
+            >
+              Delete assignment
+            </Button>
+          </div>
         </div>
       </Form>
       <Tabs defaultValue="tasks">
@@ -116,6 +141,7 @@ const EditAssignment = () => {
                 placeholder="Task title"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
+                required
               />
               <Button type="submit" name="action" value="createTask">
                 Create task
