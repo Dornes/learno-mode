@@ -26,7 +26,10 @@ const saveCodeSubmission = async (
   }
 };
 
-const generateAiResponse = async (formData: FormData) => {
+const generateAiResponse = async (
+  formData: FormData,
+  isEvaluation: boolean
+) => {
   const userMessage = formData.get("message") as string;
   const threadIdInput = formData.get("threadId") as string;
 
@@ -49,7 +52,10 @@ const generateAiResponse = async (formData: FormData) => {
     });
 
     let run = await openai.beta.threads.runs.create(threadId, {
-      assistant_id: process.env.ASSISTANT_ID || "",
+      assistant_id:
+        (isEvaluation
+          ? process.env.ASSISTANT_ID
+          : process.env.ASSISTO_MODE_ID) || "",
     });
 
     const statuses = ["requires_action", "in_progress", "cancelling", "queued"];
@@ -85,7 +91,9 @@ export const taskAction: ActionFunction = async ({ request, params }) => {
   } else if (actionType === "save") {
     return saveCodeSubmission(formData, taskId, false);
   } else if (actionType === "help-chat") {
-    return generateAiResponse(formData);
+    return generateAiResponse(formData, true);
+  } else if (actionType === "assistant") {
+    return generateAiResponse(formData, false);
   }
   return new Response("Invalid action", { status: 400 });
 };

@@ -19,7 +19,11 @@ interface ActionData {
   threadId: string;
 }
 
-const ChatButton = () => {
+interface ChatButtonProps {
+  isEvaluation: boolean;
+}
+
+const ChatButton = ({ isEvaluation }: ChatButtonProps) => {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
@@ -107,7 +111,11 @@ const ChatButton = () => {
               onChange={(e) => setInput(e.target.value)} // Update input state on change
             />
             <input type="hidden" name="threadId" value={actionData?.threadId} />
-            <Button type="submit" value="help-chat" name="action">
+            <Button
+              type="submit"
+              value={isEvaluation ? "help-chat" : "assistant"}
+              name="action"
+            >
               Send
             </Button>
           </Form>
