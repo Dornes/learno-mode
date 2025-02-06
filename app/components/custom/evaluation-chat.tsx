@@ -88,9 +88,9 @@ const EvaluationChat = ({
   };
 
   if (isApproved) {
-    return <FeedbackMessage feedback={feedback || ""} isAproved={true} />;
+    return <FeedbackMessage feedback={feedback || ""} isApproved={true} />;
   } else if (isRejected) {
-    return <FeedbackMessage feedback={feedback || ""} isAproved={false} />;
+    return <FeedbackMessage feedback={feedback || ""} isApproved={false} />;
   } else {
     return (
       <div className="flex items-center justify-center h-full">
