@@ -113,7 +113,7 @@ const ChatButton = ({ isEvaluation }: ChatButtonProps) => {
             <input type="hidden" name="threadId" value={actionData?.threadId} />
             <Button
               type="submit"
-              value={isEvaluation ? "help-chat" : "assistant"}
+              value={isEvaluation ? "evaluate-chat" : "assistant-chat"}
               name="action"
             >
               Send

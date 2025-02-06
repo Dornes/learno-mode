@@ -54,7 +54,7 @@ const generateAiResponse = async (
     let run = await openai.beta.threads.runs.create(threadId, {
       assistant_id:
         (isEvaluation
-          ? process.env.ASSISTANT_ID
+          ? process.env.EVALUATO_MODE_ID
           : process.env.ASSISTO_MODE_ID) || "",
     });
 
@@ -79,6 +79,27 @@ const generateAiResponse = async (
   }
 };
 
+const evaluateTask = async (formData: FormData) => {
+  const taskId = Number(formData.get("taskId"));
+  const feedback = formData.get("feedback") as string;
+  const isApproved = formData.get("isApproved") as string;
+  console.log(isApproved);
+  try {
+    await supabase
+      .from("tasks")
+      .update({
+        status: isApproved === "true" ? "APPROVED" : "NOT_APPROVED",
+        ai_feedback: feedback,
+      })
+      .eq("id", taskId);
+    return redirect(`./`);
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json({ error: error.message }, { status: 500 });
+    }
+  }
+};
+
 export const taskAction: ActionFunction = async ({ request, params }) => {
   const taskId = Number(params.taskId);
   if (isNaN(taskId)) {
@@ -90,10 +111,12 @@ export const taskAction: ActionFunction = async ({ request, params }) => {
     return saveCodeSubmission(formData, taskId, true);
   } else if (actionType === "save") {
     return saveCodeSubmission(formData, taskId, false);
-  } else if (actionType === "help-chat") {
+  } else if (actionType === "evaluate-chat") {
     return generateAiResponse(formData, true);
-  } else if (actionType === "assistant") {
+  } else if (actionType === "assistant-chat") {
     return generateAiResponse(formData, false);
+  } else if (actionType === "evaluate-task") {
+    return evaluateTask(formData);
   }
   return new Response("Invalid action", { status: 400 });
 };
