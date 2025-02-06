@@ -46,7 +46,7 @@ export default function Index() {
           <div className="text-4xl">Admin</div>
           <Drill className="h-7 w-7" />
           <Link className="ml-auto" to={"/create-assignment"}>
-            <Button className="">New assignment</Button>
+            <Button>New assignment</Button>
           </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4">
