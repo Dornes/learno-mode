@@ -73,6 +73,27 @@ const generateAiResponse = async (formData: FormData) => {
   }
 };
 
+const evaluateTask = async (formData: FormData) => {
+  const taskId = Number(formData.get("taskId"));
+  const feedback = formData.get("feedback") as string;
+  const isApproved = formData.get("isApproved") as string;
+  console.log(isApproved);
+  try {
+    await supabase
+      .from("tasks")
+      .update({
+        status: isApproved === "true" ? "APPROVED" : "NOT_APPROVED",
+        ai_feedback: feedback,
+      })
+      .eq("id", taskId);
+    return redirect(`./`);
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json({ error: error.message }, { status: 500 });
+    }
+  }
+};
+
 export const taskAction: ActionFunction = async ({ request, params }) => {
   const taskId = Number(params.taskId);
   if (isNaN(taskId)) {
@@ -86,6 +107,8 @@ export const taskAction: ActionFunction = async ({ request, params }) => {
     return saveCodeSubmission(formData, taskId, false);
   } else if (actionType === "help-chat") {
     return generateAiResponse(formData);
+  } else if (actionType === "evaluate-task") {
+    return evaluateTask(formData);
   }
   return new Response("Invalid action", { status: 400 });
 };
