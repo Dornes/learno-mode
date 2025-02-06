@@ -11,8 +11,8 @@ export default function Evaluation() {
   const { task } = useLoaderData<typeof loader>();
 
   return (
-    <div className="flex flex-col justify-center items-center mt-2">
-      <h1 className="text-2xl">Evaluating {task.title}</h1>
+    <div className="flex flex-col justify-center items-center mt-2 space-y-3">
+      <h1 className="text-3xl font-semibold p-5">Evaluating {task.title}</h1>
       <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono w-3/4">
         <code>{task.solution}</code>
       </pre>

@@ -73,37 +73,20 @@ const generateAiResponse = async (formData: FormData) => {
   }
 };
 
-const approveTask = async (formData: FormData) => {
+const evaluateTask = async (formData: FormData) => {
   const taskId = Number(formData.get("taskId"));
   const feedback = formData.get("feedback") as string;
+  const isApproved = formData.get("isApproved") as string;
+  console.log(isApproved);
   try {
     await supabase
       .from("tasks")
       .update({
-        status: "APPROVED",
+        status: isApproved === "true" ? "APPROVED" : "NOT_APPROVED",
         ai_feedback: feedback,
       })
       .eq("id", taskId);
-    return redirect(`/evaluation/${taskId}`);
-  } catch (error) {
-    if (error instanceof Error) {
-      return Response.json({ error: error.message }, { status: 500 });
-    }
-  }
-};
-
-const rejectTask = async (formData: FormData) => {
-  const taskId = Number(formData.get("taskId"));
-  const feedback = formData.get("feedback") as string;
-  try {
-    await supabase
-      .from("tasks")
-      .update({
-        status: "NOT_APPROVED",
-        ai_feedback: feedback,
-      })
-      .eq("id", taskId);
-    return redirect(`/evaluation/${taskId}`);
+    return redirect(`./`);
   } catch (error) {
     if (error instanceof Error) {
       return Response.json({ error: error.message }, { status: 500 });
@@ -124,10 +107,8 @@ export const taskAction: ActionFunction = async ({ request, params }) => {
     return saveCodeSubmission(formData, taskId, false);
   } else if (actionType === "help-chat") {
     return generateAiResponse(formData);
-  } else if (actionType === "approve-task") {
-    return approveTask(formData);
-  } else if (actionType === "reject-task") {
-    return rejectTask(formData);
+  } else if (actionType === "evaluate-task") {
+    return evaluateTask(formData);
   }
   return new Response("Invalid action", { status: 400 });
 };
