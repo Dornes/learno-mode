@@ -149,6 +149,7 @@ const EvaluationChat = ({
                 name="message"
                 placeholder="Type your message..."
                 className="flex-grow"
+                autoComplete="off"
                 value={input || ""}
                 onChange={(e) => setInput(e.target.value)} // Update input state on change
               />
