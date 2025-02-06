@@ -1,5 +1,6 @@
 import { ActionFunction } from "@remix-run/node";
 import { Form } from "@remix-run/react";
+import BackButton from "~/components/custom/back-button";
 import { TitleInput } from "~/components/custom/form/title-input";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -10,6 +11,7 @@ export const action: ActionFunction = createAssignmentAction;
 const CreateAssignment = () => {
   return (
     <div className="w-4/5 md:w-3/5 mx-auto mt-10 space-y-2">
+      <BackButton to="/admin" />
       <Form method="post">
         <div className="mb-10 space-y-4">
           <TitleInput

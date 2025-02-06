@@ -22,6 +22,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
+import BackButton from "~/components/custom/back-button";
 
 export const loader: LoaderFunction = assignmentLoader;
 export const action: ActionFunction = editAssignmentAction;
@@ -59,6 +60,7 @@ const EditAssignment = () => {
 
   return (
     <div className="w-4/5 md:w-3/5 mx-auto mt-10">
+      <BackButton to="/admin" />
       <Form method="post">
         <div className="mb-10 space-y-4">
           <TitleInput
