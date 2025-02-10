@@ -79,11 +79,11 @@ const generateAiResponse = async (
   }
 };
 
-const evaluateTask = async (formData: FormData) => {
-  const taskId = Number(formData.get("taskId"));
+const evaluateTask = async (formData: FormData, taskId: number) => {
   const feedback = formData.get("feedback") as string;
   const isApproved = formData.get("isApproved") as string;
-  console.log(isApproved);
+  const threadId = formData.get("threadId") as string;
+  saveThreadId(threadId, taskId);
   try {
     await supabase
       .from("tasks")
@@ -93,6 +93,21 @@ const evaluateTask = async (formData: FormData) => {
       })
       .eq("id", taskId);
     return redirect(`./`);
+  } catch (error) {
+    if (error instanceof Error) {
+      return Response.json({ error: error.message }, { status: 500 });
+    }
+  }
+};
+
+const saveThreadId = async (threadId: string, taskId: number) => {
+  try {
+    await supabase
+      .from("tasks")
+      .update({
+        thread_id: threadId,
+      })
+      .eq("id", taskId);
   } catch (error) {
     if (error instanceof Error) {
       return Response.json({ error: error.message }, { status: 500 });
@@ -116,7 +131,7 @@ export const taskAction: ActionFunction = async ({ request, params }) => {
   } else if (actionType === "assistant-chat") {
     return generateAiResponse(formData, false);
   } else if (actionType === "evaluate-task") {
-    return evaluateTask(formData);
+    return evaluateTask(formData, taskId);
   }
   return new Response("Invalid action", { status: 400 });
 };

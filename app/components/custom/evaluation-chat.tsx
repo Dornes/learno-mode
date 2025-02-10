@@ -66,7 +66,7 @@ const EvaluationChat = ({
     if (solution) {
       const formData = new FormData();
       formData.append("message", solution);
-      formData.append("action", "help-chat");
+      formData.append("action", "evaluate-chat");
       submit(formData, { method: "post" });
       setIsLoading(true);
     }
@@ -83,6 +83,7 @@ const EvaluationChat = ({
     formData.append("taskId", taskId.toString());
     formData.append("feedback", feedbackValue);
     formData.append("isApproved", approved.toString());
+    formData.append("threadId", actionData?.threadId || "");
     formData.append("action", "evaluate-task");
     submit(formData, { method: "post" });
   };
