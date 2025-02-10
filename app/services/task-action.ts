@@ -26,7 +26,10 @@ const saveCodeSubmission = async (
   }
 };
 
-const generateAiResponse = async (formData: FormData) => {
+const generateAiResponse = async (
+  formData: FormData,
+  isEvaluation: boolean
+) => {
   const userMessage = formData.get("message") as string;
   const threadIdInput = formData.get("threadId") as string;
 
@@ -49,7 +52,10 @@ const generateAiResponse = async (formData: FormData) => {
     });
 
     let run = await openai.beta.threads.runs.create(threadId, {
-      assistant_id: process.env.ASSISTANT_ID || "",
+      assistant_id:
+        (isEvaluation
+          ? process.env.EVALUATO_MODE_ID
+          : process.env.ASSISTO_MODE_ID) || "",
     });
 
     const statuses = ["requires_action", "in_progress", "cancelling", "queued"];
@@ -105,8 +111,10 @@ export const taskAction: ActionFunction = async ({ request, params }) => {
     return saveCodeSubmission(formData, taskId, true);
   } else if (actionType === "save") {
     return saveCodeSubmission(formData, taskId, false);
-  } else if (actionType === "help-chat") {
-    return generateAiResponse(formData);
+  } else if (actionType === "evaluate-chat") {
+    return generateAiResponse(formData, true);
+  } else if (actionType === "assistant-chat") {
+    return generateAiResponse(formData, false);
   } else if (actionType === "evaluate-task") {
     return evaluateTask(formData);
   }

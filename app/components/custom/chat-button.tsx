@@ -107,7 +107,7 @@ const ChatButton = () => {
               onChange={(e) => setInput(e.target.value)} // Update input state on change
             />
             <input type="hidden" name="threadId" value={actionData?.threadId} />
-            <Button type="submit" value="help-chat" name="action">
+            <Button type="submit" value="assistant-chat" name="action">
               Send
             </Button>
           </Form>

@@ -158,7 +158,7 @@ const EvaluationChat = ({
                 name="threadId"
                 value={actionData?.threadId}
               />
-              <Button type="submit" value="help-chat" name="action">
+              <Button type="submit" value="evaluate-chat" name="action">
                 Send
               </Button>
             </Form>
