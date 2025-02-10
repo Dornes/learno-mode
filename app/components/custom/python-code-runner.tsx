@@ -117,7 +117,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
               <Button
                 name="action"
                 value="evaluate"
-                disabled={!evaluationAllowed}
+                // disabled={!evaluationAllowed}
               >
                 Evaluate
               </Button>

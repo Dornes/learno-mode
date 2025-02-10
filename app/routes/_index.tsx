@@ -24,7 +24,11 @@ export default function Index() {
 
   return (
     <>
-      <div className="w-4/5 md:w-3/5 mx-auto mt-10">
+      <Link className="fixed bottom-3 left-1/2 text-gray-600" to={"/admin"}>
+        Admin
+      </Link>
+      <div className="w-4/5 md:w-3/5 mx-auto mt-20">
+        <h1 className="text-4xl mb-4">Learno mode</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {assignments.map((assignment: Assignment) => (
             <div key={assignment.id}>
@@ -32,9 +36,7 @@ export default function Index() {
                 <Card className="items-center hover:bg-gray-50 h-44 overflow-hidden">
                   <CardHeader>
                     <div className="flex flex-row space-x-2">
-                      <CardTitle className="truncate">
-                        {assignment.title}
-                      </CardTitle>
+                      <CardTitle>{assignment.title}</CardTitle>
                       <CircleCheckBig
                         className={clsx("w-6 h-6 flex-shrink-0 flex-grow-0", {
                           "text-green-500": assignment.all_tasks_approved,
