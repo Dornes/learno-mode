@@ -63,24 +63,36 @@ const ChatButton = () => {
         </CardHeader>
         <CardContent className="h-[calc(100%-8rem)] overflow-hidden">
           <ScrollArea className="h-full">
-            {actionData?.messagesData?.map((message) => (
-              <div
-                key={message?.id}
-                className={`mb-4 pr-3 ${
-                  message?.role == "user" ? "text-right" : "text-left"
-                }`}
-              >
-                <span
-                  className={`inline-block p-2 rounded-lg ${
-                    message?.role === "user"
-                      ? `bg-blue-500 text-white`
-                      : `bg-gray-200 text-black`
-                  }`}
-                >
-                  {message?.content[0].text.value}
-                </span>
-              </div>
-            ))}
+            {actionData?.messagesData?.map((message) => {
+              // for safety, verify message?.content exists & isn't empty
+              const firstBlock = message?.content[0];
+
+              // type guard: only render if it's actually a text block
+              if (firstBlock?.type === "text") {
+                return (
+                  <div
+                    key={message?.id}
+                    className={`mb-4 pr-3 ${
+                      message?.role == "user" ? "text-right" : "text-left"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block p-2 rounded-lg ${
+                        message?.role === "user"
+                          ? `bg-blue-500 text-white`
+                          : `bg-gray-200 text-black`
+                      }`}
+                    >
+                      {firstBlock.text.value}
+                    </span>
+                  </div>
+                );
+              }
+
+              // If it's not text, return null or handle differently
+              return null;
+            })}
+
             {isLoading ? (
               <div className="text-right">
                 <span className="inline-block p-2 rounded-lg bg-blue-500 text-white">
