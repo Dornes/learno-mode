@@ -38,24 +38,29 @@ const EvaluationChat = ({
   // Checks if any of the messages contain the string "I approve this task." and approves the task
   useEffect(() => {
     setIsLoading(false);
+
     for (const message of actionData?.messagesData ?? []) {
       if (message.role === "assistant") {
-        if (message.content[0].text.value.includes("I approve this task.")) {
-          const feedbackValue = message.content[0].text.value.split(
-            "I approve this task."
-          )[1];
-          evaluateTask(feedbackValue, true);
-          break;
-        } else if (
-          message.content[0].text.value.includes(
-            "I think you could use a little extra work."
-          )
-        ) {
-          const feedbackValue = message.content[0].text.value.split(
-            "I think you could use a little extra work."
-          )[1];
-          evaluateTask(feedbackValue, false);
-          break;
+        // Safely get the first block
+        const firstBlock = message?.content?.[0];
+
+        // Narrow the type: Make sure it's a text block
+        if (firstBlock?.type === "text") {
+          const { value } = firstBlock.text;
+
+          if (value.includes("I approve this task.")) {
+            const feedbackValue = value.split("I approve this task.")[1];
+            evaluateTask(feedbackValue, true);
+            break;
+          } else if (
+            value.includes("I think you could use a little extra work.")
+          ) {
+            const feedbackValue = value.split(
+              "I think you could use a little extra work."
+            )[1];
+            evaluateTask(feedbackValue, false);
+            break;
+          }
         }
       }
     }
@@ -66,7 +71,7 @@ const EvaluationChat = ({
     if (solution) {
       const formData = new FormData();
       formData.append("message", solution);
-      formData.append("action", "help-chat");
+      formData.append("action", "evaluate-chat");
       submit(formData, { method: "post" });
       setIsLoading(true);
     }
@@ -98,9 +103,17 @@ const EvaluationChat = ({
           <CardContent className="overflow-hidden">
             <ScrollArea className="h-[400px]">
               {actionData?.messagesData?.map((message, index) => {
-                // Check if the message is the first one (solution) by its position or content
+                // For safety, get the first block
+                const firstBlock = message?.content[0];
+
+                // If there's no first block or it's not a text block, just skip/return null
+                if (!firstBlock || firstBlock.type !== "text") {
+                  return null;
+                }
+
+                // Now TypeScript knows firstBlock is a text block
                 const isInitialSolution =
-                  index === 0 && message?.content[0]?.text.value === solution;
+                  index === 0 && firstBlock.text.value === solution;
 
                 if (isInitialSolution) {
                   return null;
@@ -116,15 +129,16 @@ const EvaluationChat = ({
                     <span
                       className={`inline-block p-2 rounded-lg ${
                         message?.role === "user"
-                          ? `bg-blue-500 text-white`
-                          : `bg-gray-200 text-black`
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-200 text-black"
                       }`}
                     >
-                      {message?.content[0].text.value}
+                      {firstBlock.text.value}
                     </span>
                   </div>
                 );
               })}
+
               {isLoading ? (
                 <div className="text-right">
                   {currentMessage && (
