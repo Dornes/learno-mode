@@ -20,6 +20,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
   const [codeInput, setCodeInput] = useState<string>(solution);
   const [printOutput, setPrintOutput] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [evaluationAllowed, setEvaluationAllowed] = useState<boolean>(false);
   const isClient = typeof window !== "undefined";
 
