@@ -10,7 +10,7 @@ const ChatLogs = () => {
         task.thread_id ? (
           <Link
             key={task.id}
-            to={`/thread/${task.thread_id}`}
+            to={`/thread/${task.id}`}
             className="block p-4 border rounded shadow hover:bg-gray-100"
           >
             <h3 className="text-lg font-semibold">Chat log for {task.title}</h3>
