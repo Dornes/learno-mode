@@ -5,7 +5,11 @@ const ChatLogs = () => {
   const { tasks } = useLoaderData<typeof loader>();
 
   return (
-    <div className="grid grid-cols-1 gap-4">
+    <div className="space-y-1">
+      <h1 className="text-xl">Chat logs</h1>
+      <p className="mb-4">
+        Note that only logs for completed evaluations will appear in this list
+      </p>
       {tasks.map((task: Task) =>
         task.thread_id ? (
           <Link
@@ -13,7 +17,7 @@ const ChatLogs = () => {
             to={`/thread/${task.id}`}
             className="block p-4 border rounded shadow hover:bg-gray-100"
           >
-            <h3 className="text-lg font-semibold">Chat log for {task.title}</h3>
+            <h3 className="text-lg ">Chat log for {task.title} evaluation</h3>
           </Link>
         ) : null
       )}
