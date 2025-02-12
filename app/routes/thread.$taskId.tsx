@@ -6,7 +6,7 @@ import { LoaderFunction } from "@remix-run/node";
 import { taskLoader } from "~/services/task-loader";
 import { Button } from "~/components/ui/button";
 
-interface TaskLoader {
+interface TaskLoaderData {
   thread: OpenAI.Beta.Threads.Messages.Message[];
   task: Task;
 }
@@ -22,7 +22,7 @@ const downloadFile = (data: string, filename: string, type: string) => {
 };
 
 export default function ThreadPage() {
-  const { task, thread } = useLoaderData<TaskLoader>();
+  const { task, thread } = useLoaderData<TaskLoaderData>();
 
   const handleDownloadTxt = () => {
     const txtData = thread
