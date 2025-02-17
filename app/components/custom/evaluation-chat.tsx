@@ -88,6 +88,7 @@ const EvaluationChat = ({
     formData.append("taskId", taskId.toString());
     formData.append("feedback", feedbackValue);
     formData.append("isApproved", approved.toString());
+    formData.append("threadId", actionData?.threadId || "");
     formData.append("action", "evaluate-task");
     submit(formData, { method: "post" });
   };
