@@ -13,7 +13,7 @@ import { Form, useActionData } from "@remix-run/react";
 import { ScrollArea } from "../ui/scroll-area";
 import MessageLoading from "./message-loading";
 import { Message } from "openai/resources/beta/threads/messages.mjs";
-import ReactMarkdown from "react-markdown";
+import { MarkdownRenderer } from "./markdown-renderer";
 
 interface ActionData {
   messagesData: Message[];
@@ -62,12 +62,11 @@ const ChatButton = () => {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="h-[calc(100%-8rem)] overflow-hidden">
+        <CardContent className="h-[calc(100%-8rem)] w-full">
           <ScrollArea className="h-full">
             {actionData?.messagesData?.map((message) => {
               // for safety, verify message?.content exists & isn't empty
               const firstBlock = message?.content[0];
-              console.log(firstBlock.text.value);
 
               // type guard: only render if it's actually a text block
               if (firstBlock?.type === "text") {
@@ -85,7 +84,7 @@ const ChatButton = () => {
                           : `bg-gray-200 text-black`
                       }`}
                     >
-                      <ReactMarkdown>{firstBlock.text.value}</ReactMarkdown>
+                      <MarkdownRenderer content={firstBlock.text.value} />
                     </span>
                   </div>
                 );
@@ -96,7 +95,7 @@ const ChatButton = () => {
             })}
 
             {isLoading ? (
-              <div className="text-right">
+              <div className="text-right space-y-2">
                 <span className="inline-block p-2 rounded-lg bg-blue-500 text-white">
                   {currentMessage}
                 </span>
