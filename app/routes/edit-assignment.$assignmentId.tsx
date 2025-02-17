@@ -152,7 +152,7 @@ const EditAssignment = () => {
             </div>
           </Form>
         </TabsContent>
-        <TabsContent value="chat-logs">
+        <TabsContent value="chat-logs" className="mt-4">
           <ChatLogs />{" "}
         </TabsContent>
       </Tabs>
