@@ -13,6 +13,7 @@ import { Form, useActionData } from "@remix-run/react";
 import { ScrollArea } from "../ui/scroll-area";
 import MessageLoading from "./message-loading";
 import { Message } from "openai/resources/beta/threads/messages.mjs";
+import ReactMarkdown from "react-markdown";
 
 interface ActionData {
   messagesData: Message[];
@@ -66,6 +67,7 @@ const ChatButton = () => {
             {actionData?.messagesData?.map((message) => {
               // for safety, verify message?.content exists & isn't empty
               const firstBlock = message?.content[0];
+              console.log(firstBlock.text.value);
 
               // type guard: only render if it's actually a text block
               if (firstBlock?.type === "text") {
@@ -83,7 +85,7 @@ const ChatButton = () => {
                           : `bg-gray-200 text-black`
                       }`}
                     >
-                      {firstBlock.text.value}
+                      <ReactMarkdown>{firstBlock.text.value}</ReactMarkdown>
                     </span>
                   </div>
                 );
