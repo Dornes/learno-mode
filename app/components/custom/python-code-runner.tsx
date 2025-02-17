@@ -52,6 +52,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
   };
 
   const runCode = (codeInput: string) => {
+    setPrintOutput("");
     try {
       pyodide!.runPython(codeInput);
     } catch (error) {
