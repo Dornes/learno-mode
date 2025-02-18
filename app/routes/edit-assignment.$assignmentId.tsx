@@ -23,6 +23,7 @@ import {
   AccordionTrigger,
 } from "~/components/ui/accordion";
 import BackButton from "~/components/custom/back-button";
+import ChatLogs from "~/components/custom/admin/chat-logs";
 
 export const loader: LoaderFunction = assignmentLoader;
 export const action: ActionFunction = editAssignmentAction;
@@ -103,8 +104,8 @@ const EditAssignment = () => {
           <TabsTrigger className="flex-1" value="tasks">
             Tasks
           </TabsTrigger>
-          <TabsTrigger className="flex-1" value="configuration">
-            Configuration
+          <TabsTrigger className="flex-1" value="chat-logs">
+            Chat logs
           </TabsTrigger>
         </TabsList>
         <TabsContent value="tasks" className="mt-4">
@@ -151,7 +152,9 @@ const EditAssignment = () => {
             </div>
           </Form>
         </TabsContent>
-        <TabsContent value="configuration"></TabsContent>
+        <TabsContent value="chat-logs" className="mt-4">
+          <ChatLogs />{" "}
+        </TabsContent>
       </Tabs>
     </div>
   );
