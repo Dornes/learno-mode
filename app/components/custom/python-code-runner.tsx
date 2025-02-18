@@ -63,7 +63,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      setPrintOutput(errorMessage);
+      setOutput(errorMessage);
     }
   };
 
@@ -138,6 +138,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
           <div className="bg-gray-100 p-4 rounded-md w-full overflow-x-auto">
             <pre>
               {output}
+              <br />
               {printOutput}
             </pre>
           </div>
