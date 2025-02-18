@@ -12,11 +12,11 @@ export default function Task() {
   const { task } = useLoaderData<typeof loader>();
 
   return (
-    <div>
+    <>
       <h1 className="text-4xl font-bold">{task.title}</h1>
       <p className="my-4">{task.description}</p>
       <PythonCodeRunner solution={task.solution} test_code={task.test_code} />
       <ChatButton />
-    </div>
+    </>
   );
 }
