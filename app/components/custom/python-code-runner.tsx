@@ -59,7 +59,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
   const runCode = (codeInput: string) => {
     setPrintOutput("");
     try {
-      pyodide!.runPython(codeInput);
+      setOutput(pyodide!.runPython(codeInput));
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
