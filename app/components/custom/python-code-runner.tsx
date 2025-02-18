@@ -24,6 +24,10 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
   const [evaluationAllowed, setEvaluationAllowed] = useState<boolean>(false);
   const isClient = typeof window !== "undefined";
 
+  console.log("solustion", solution);
+
+  console.log("test code:", test_code);
+
   //Loads Pyodide when the component mounts
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -46,6 +50,11 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
       }
     }
   }, [isTesting, printOutput]);
+
+  //Update code editor when swapping tasks
+  useEffect(() => {
+    setCodeInput(solution);
+  }, [solution]);
 
   const printHandler = (text: string) => {
     setPrintOutput((prev) => (prev ? prev + "\n" + text : text));
