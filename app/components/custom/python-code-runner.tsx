@@ -28,7 +28,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       loadPyodide({
-        indexURL: "https://cdn.jsdelivr.net/pyodide/v0.27.1/full",
+        indexURL: "https://cdn.jsdelivr.net/pyodide/v0.27.2/full",
         stderr: (text) => console.log(text),
         stdout: (text) => printHandler(text),
       })
@@ -59,7 +59,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
   const runCode = (codeInput: string) => {
     setPrintOutput("");
     try {
-      pyodide!.runPython(codeInput);
+      setOutput(pyodide!.runPython(codeInput));
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
