@@ -58,7 +58,13 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
 
   const runCode = (codeInput: string) => {
     setPrintOutput("");
-    setOutput(pyodide!.runPython(codeInput));
+    try {
+      setOutput(pyodide!.runPython(codeInput));
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      setOutput(errorMessage);
+    }
   };
 
   const handleRunClick = (codeInput: string) => {
@@ -132,6 +138,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
           <div className="bg-gray-100 p-4 rounded-md w-full overflow-x-auto">
             <pre>
               {output}
+              <br />
               {printOutput}
             </pre>
           </div>
