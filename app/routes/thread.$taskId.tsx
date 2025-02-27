@@ -13,25 +13,34 @@ interface TaskLoaderData {
 
 export const loader: LoaderFunction = taskLoader;
 
-const downloadFile = (data: string, filename: string, type: string) => {
-  const blob = new Blob([data], { type });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = filename;
-  link.click();
-};
-
 export default function ThreadPage() {
   const { task, thread } = useLoaderData<TaskLoaderData>();
 
+  const downloadFile = (data: string, filename: string, type: string) => {
+    const blob = new Blob([data], { type });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+  };
+
   const handleDownloadTxt = () => {
     const txtData = thread
-      .map(
-        (message) =>
-          `${message?.role === "user" ? "User:" : "AI:"} ${
-            message?.content[0].text.value
-          }`
-      )
+      .map((message) => {
+        // Safely get the first content block
+        const firstBlock = message?.content?.[0];
+
+        // Narrow the type: check if this block is a text block
+        if (firstBlock?.type === "text") {
+          // Now we can safely access firstBlock.text.value
+          return `${message?.role === "user" ? "User:" : "AI:"} ${
+            firstBlock.text.value
+          }`;
+        }
+
+        // If it's not a text block (e.g., an image block), return something else or just an empty string
+        return "";
+      })
       .join("\n\n");
     downloadFile(txtData, `${task.title}_chatlog.txt`, "text/plain");
   };
@@ -59,7 +68,9 @@ export default function ThreadPage() {
                     : `bg-gray-200 text-black`
                 }`}
               >
-                {message?.content[0].text.value}
+                {message?.content?.[0]?.type === "text"
+                  ? message?.content?.[0]?.text.value
+                  : ""}
               </span>
             </div>
           );

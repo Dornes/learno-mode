@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import MessageLoading from "./message-loading";
 import { Input } from "../ui/input";
 import { Message } from "openai/resources/beta/threads/messages.mjs";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { STATUS } from "~/types/types";
 import FeedbackMessage from "./feedback-message";
@@ -35,6 +35,19 @@ const EvaluationChat = ({
   const isApproved = status === "APPROVED";
   const isRejected = status === "NOT_APPROVED";
 
+  const evaluateTask = useCallback(
+    (feedbackValue: string, approved: boolean) => {
+      const formData = new FormData();
+      formData.append("taskId", taskId.toString());
+      formData.append("feedback", feedbackValue);
+      formData.append("isApproved", approved.toString());
+      formData.append("threadId", actionData?.threadId || "");
+      formData.append("action", "evaluate-task");
+      submit(formData, { method: "post" });
+    },
+    [actionData?.threadId, submit, taskId]
+  );
+
   // Checks if any of the messages contain the string "I approve this task." and approves the task
   useEffect(() => {
     setIsLoading(false);
@@ -64,7 +77,7 @@ const EvaluationChat = ({
         }
       }
     }
-  }, [actionData]);
+  }, [actionData, evaluateTask]);
 
   // Automatically send the solution to the chatbot when the component mounts
   useEffect(() => {
@@ -81,16 +94,6 @@ const EvaluationChat = ({
     setCurrentMessage(input); // Set the current message to the input value
     setInput(""); // Clear the input field
     setIsLoading(true); // Show the loading indicator
-  };
-
-  const evaluateTask = (feedbackValue: string, approved: boolean) => {
-    const formData = new FormData();
-    formData.append("taskId", taskId.toString());
-    formData.append("feedback", feedbackValue);
-    formData.append("isApproved", approved.toString());
-    formData.append("threadId", actionData?.threadId || "");
-    formData.append("action", "evaluate-task");
-    submit(formData, { method: "post" });
   };
 
   if (isApproved) {

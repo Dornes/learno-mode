@@ -14,8 +14,9 @@ export const action: ActionFunction = taskAction;
 export default function Evaluation() {
   const { task } = useLoaderData<typeof loader>();
 
+  // Applying the syntax highlighting
   useEffect(() => {
-    Prism.highlightAll(); // This will apply the syntax highlighting
+    Prism.highlightAll();
   }, []);
 
   return (
