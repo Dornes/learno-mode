@@ -28,6 +28,7 @@ export default function Index() {
   const message = searchParams.get("message");
   const navigate = useNavigate();
 
+  //toast generation
   useEffect(() => {
     if (message) {
       toast.info(message, {

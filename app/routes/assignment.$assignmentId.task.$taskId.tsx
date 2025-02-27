@@ -16,7 +16,7 @@ export default function Task() {
       <h1 className="text-4xl font-bold">{task.title}</h1>
       <p className="my-4">{task.description}</p>
       <PythonCodeRunner solution={task.solution} test_code={task.test_code} />
-      <ChatButton />
+      <ChatButton taskDescription={task.description} />
     </>
   );
 }

@@ -9,7 +9,7 @@ import {
   CardFooter,
   CardContent,
 } from "../ui/card";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useSubmit } from "@remix-run/react";
 import { ScrollArea } from "../ui/scroll-area";
 import MessageLoading from "./message-loading";
 import { Message } from "openai/resources/beta/threads/messages.mjs";
@@ -20,16 +20,29 @@ interface ActionData {
   threadId: string;
 }
 
-const ChatButton = () => {
+interface ChatButtonProps {
+  taskDescription: string;
+}
+
+const ChatButton = ({ taskDescription }: ChatButtonProps) => {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const actionData = useActionData<ActionData>();
+  const submit = useSubmit();
 
   useEffect(() => {
     setIsLoading(false);
   }, [actionData]);
+  // Automatically send the task description to the chatbot when the component mounts
+  useEffect(() => {
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.append("message", taskDescription);
+    formData.append("action", "assistant-chat");
+    submit(formData, { method: "post" });
+  }, [taskDescription, submit]);
 
   const handleSubmit = () => {
     setCurrentMessage(input); // Set the current message to the input value
@@ -64,12 +77,18 @@ const ChatButton = () => {
         </CardHeader>
         <CardContent className="h-[calc(100%-8rem)] w-full">
           <ScrollArea className="h-full">
-            {actionData?.messagesData?.map((message) => {
+            {actionData?.messagesData?.map((message, index) => {
               // for safety, verify message?.content exists & isn't empty
               const firstBlock = message?.content[0];
 
               // type guard: only render if it's actually a text block
               if (firstBlock?.type === "text") {
+                const isTaskDescription =
+                  index === 0 && firstBlock.text.value === taskDescription;
+
+                if (isTaskDescription) {
+                  return null;
+                }
                 return (
                   <div
                     key={message?.id}
@@ -96,9 +115,11 @@ const ChatButton = () => {
 
             {isLoading ? (
               <div className="text-right space-y-2">
-                <span className="inline-block p-2 rounded-lg bg-blue-500 text-white">
-                  {currentMessage}
-                </span>
+                {currentMessage && (
+                  <span className="inline-block p-2 rounded-lg bg-blue-500 text-white">
+                    {currentMessage}
+                  </span>
+                )}
                 <div className="text-left">
                   <MessageLoading />
                 </div>
