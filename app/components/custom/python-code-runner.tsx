@@ -92,20 +92,18 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
       <div className="w-3/4 border-none shadow-none">
         <div className="mt-5 p-0">
           {isClient && (
-            <Editor
-              highlight={(code) =>
-                Prism.highlight(code, Prism.languages.python, "python")
-              }
-              onValueChange={(code) => setCodeInput(code)}
-              value={codeInput}
-              name="code"
-              padding={10}
-              style={{
-                overflow: "auto",
-                maxHeight: "400px",
-              }}
-              className="bg-gray-100 rounded-md"
-            />
+            <div className="max-h-[400px] overflow-auto">
+              <Editor
+                highlight={(code) =>
+                  Prism.highlight(code, Prism.languages.python, "python")
+                }
+                onValueChange={(code) => setCodeInput(code)}
+                value={codeInput}
+                name="code"
+                padding={10}
+                className="bg-gray-100 rounded-md"
+              />
+            </div>
           )}
         </div>
         <div className="flex flex-col items-start gap-4 p-0 mt-2">
