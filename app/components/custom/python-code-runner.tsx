@@ -17,7 +17,7 @@ interface PythonCodeRunnerProps {
 function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
   const [pyodide, setPyodide] = useState<PyodideInterface | null>(null);
   const [output, setOutput] = useState<string | null>(null);
-  const [codeInput, setCodeInput] = useState<string>(solution ?? null);
+  const [codeInput, setCodeInput] = useState<string>(solution);
   const [printOutput, setPrintOutput] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
