@@ -2,12 +2,18 @@ import { Form } from "@remix-run/react";
 import { Input } from "../../ui/input";
 import { Task } from "~/types/types";
 import { Button } from "../../ui/button";
+import Editor from "react-simple-code-editor";
+import Prism from "prismjs";
+import "prismjs/components/prism-python";
+import "prismjs/themes/prism.css";
+import { useState } from "react";
 
 interface TaskFormProps {
   task: Task;
 }
 
 const TaskForm = ({ task }: TaskFormProps) => {
+  const [codeInput, setCodeInput] = useState<string>(task?.test_code || "");
   const handleConfirm = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     message: string
@@ -16,6 +22,7 @@ const TaskForm = ({ task }: TaskFormProps) => {
       event.preventDefault();
     }
   };
+  const isClient = typeof window !== "undefined";
 
   return (
     <div className="bg-gray-50 p-2">
@@ -33,11 +40,20 @@ const TaskForm = ({ task }: TaskFormProps) => {
           defaultValue={task?.description || ""}
         />
         <p className="text-gray-500 text-sm">Test code</p>
-        <Input
-          name="testCode"
-          placeholder="Test code"
-          defaultValue={task?.test_code || ""}
-        />
+        {isClient && (
+          <div className="overflow-auto h-[300px]">
+            <Editor
+              highlight={(code) =>
+                Prism.highlight(code, Prism.languages.python, "python")
+              }
+              onValueChange={(code) => setCodeInput(code)}
+              value={codeInput}
+              name="testCode"
+              padding={10}
+              className="bg-gray-100 rounded-md"
+            />
+          </div>
+        )}
         <input type="hidden" value={task.id} name="taskId" />
         <div className="space-x-2">
           <Button type="submit" name="action" value="editTask">
