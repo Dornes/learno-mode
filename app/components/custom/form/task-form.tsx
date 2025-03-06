@@ -41,7 +41,7 @@ const TaskForm = ({ task }: TaskFormProps) => {
         />
         <p className="text-gray-500 text-sm">Test code</p>
         {isClient && (
-          <div className="overflow-auto h-[300px]">
+          <div className="overflow-auto max-h-[300px]">
             <Editor
               highlight={(code) =>
                 Prism.highlight(code, Prism.languages.python, "python")
@@ -50,7 +50,7 @@ const TaskForm = ({ task }: TaskFormProps) => {
               value={codeInput}
               name="testCode"
               padding={10}
-              className="bg-gray-100 rounded-md"
+              className="bg-gray-100 min-h-[300px] rounded-md"
             />
           </div>
         )}
