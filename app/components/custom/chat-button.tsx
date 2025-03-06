@@ -59,7 +59,7 @@ const ChatButton = ({ taskDescription }: ChatButtonProps) => {
         Ask AI <BotMessageSquare />
       </Button>
       <Card
-        className={`fixed bottom-4 right-4 w-[30rem] h-96 ${
+        className={`fixed bottom-4 right-4 w-[50rem] h-96 ${
           open ? "block" : "hidden"
         }`}
       >

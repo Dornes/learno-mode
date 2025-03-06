@@ -2,7 +2,6 @@ import { loadPyodide, PyodideInterface } from "pyodide";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
-import { Card, CardContent, CardFooter } from "../ui/card";
 import { Form } from "@remix-run/react";
 import Editor from "react-simple-code-editor";
 import Prism from "prismjs";
@@ -17,7 +16,7 @@ interface PythonCodeRunnerProps {
 function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
   const [pyodide, setPyodide] = useState<PyodideInterface | null>(null);
   const [output, setOutput] = useState<string | null>(null);
-  const [codeInput, setCodeInput] = useState<string>(solution ?? null);
+  const [codeInput, setCodeInput] = useState<string>(solution);
   const [printOutput, setPrintOutput] = useState<string | null>(null);
   const [isTesting, setIsTesting] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -41,7 +40,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
     }
     setEvaluationAllowed(false);
     if (isTesting) {
-      if (printOutput === "All test cases passed!") {
+      if (printOutput!.includes("All test cases passed!")) {
         setEvaluationAllowed(true);
       }
     }
@@ -89,22 +88,24 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
 
   return (
     <Form method="POST">
-      <Card className="w-3/4 border-none shadow-none">
-        <CardContent className="mt-5 p-0">
+      <div className="w-3/4 border-none shadow-none">
+        <div className="mt-5 p-0">
           {isClient && (
-            <Editor
-              highlight={(code) =>
-                Prism.highlight(code, Prism.languages.python, "python")
-              }
-              onValueChange={(code) => setCodeInput(code)}
-              value={codeInput}
-              name="code"
-              padding={10}
-              className="h-80 bg-gray-100 rounded-md"
-            />
+            <div className="max-h-[400px] overflow-auto">
+              <Editor
+                highlight={(code) =>
+                  Prism.highlight(code, Prism.languages.python, "python")
+                }
+                onValueChange={(code) => setCodeInput(code)}
+                value={codeInput}
+                name="code"
+                padding={10}
+                className="bg-gray-100 min-h-[400px] rounded-md"
+              />
+            </div>
           )}
-        </CardContent>
-        <CardFooter className="flex flex-col items-start gap-4 p-0 mt-2">
+        </div>
+        <div className="flex flex-col items-start gap-4 p-0 mt-2">
           <div className="flex flex-row w-full">
             {pyodide ? (
               <Button
@@ -135,15 +136,15 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
               </Button>
             </div>
           </div>
-          <div className="bg-gray-100 p-4 rounded-md w-full overflow-x-auto">
-            <pre>
+          <div className="bg-gray-100 p-4 rounded-md w-full">
+            <pre className="max-h-36 overflow-auto">
               {output}
               <br />
               {printOutput}
             </pre>
           </div>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </Form>
   );
 }
