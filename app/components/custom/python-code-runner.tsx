@@ -2,7 +2,6 @@ import { loadPyodide, PyodideInterface } from "pyodide";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
-// import { Card, CardContent, CardFooter } from "../ui/card";
 import { Form } from "@remix-run/react";
 import Editor from "react-simple-code-editor";
 import Prism from "prismjs";
@@ -41,7 +40,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
     }
     setEvaluationAllowed(false);
     if (isTesting) {
-      if (printOutput === "All test cases passed!") {
+      if (printOutput!.includes("All test cases passed!")) {
         setEvaluationAllowed(true);
       }
     }
@@ -101,7 +100,7 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
                 value={codeInput}
                 name="code"
                 padding={10}
-                className="bg-gray-100 rounded-md"
+                className="bg-gray-100 min-h-[400px] rounded-md"
               />
             </div>
           )}
