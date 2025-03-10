@@ -1,6 +1,7 @@
 import { vitePlugin as remix } from "@remix-run/dev";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+// import { vercelPreset } from "@vercel/remix/vite";
 
 declare module "@remix-run/node" {
   interface Future {
@@ -9,17 +10,17 @@ declare module "@remix-run/node" {
 }
 
 export default defineConfig({
-  ssr: {
-    // List packages that you do NOT want treated as external
-    // (i.e., that must be fully bundled into the server build)
-    noExternal: [
-      "@radix-ui/react-scroll-area",
-      "@radix-ui/react-use-callback-ref",
-      "/@radix-ui/.*/",
-      "lucide-react",
-      // or even use a regex like /@radix-ui\/.*/
-    ],
-  },
+  // ssr: {
+  //   // List packages that you do NOT want treated as external
+  //   // (i.e., that must be fully bundled into the server build)
+  //   noExternal: [
+  //     "@radix-ui/react-scroll-area",
+  //     "@radix-ui/react-use-callback-ref",
+  //     "/@radix-ui/.*/",
+  //     "lucide-react",
+  //     // or even use a regex like /@radix-ui\/.*/
+  //   ],
+  // },
   plugins: [
     remix({
       future: {
@@ -29,6 +30,7 @@ export default defineConfig({
         v3_singleFetch: true,
         v3_lazyRouteDiscovery: true,
       },
+      // presets: [vercelPreset()],
     }),
     tsconfigPaths(),
   ],
