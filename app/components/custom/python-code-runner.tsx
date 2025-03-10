@@ -25,8 +25,8 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
 
   //Loads Pyodide when the component mounts
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      loadPyodide({
+    async function initPyodide() {
+      const pyodideInstance = await loadPyodide({
         indexURL: "https://cdn.jsdelivr.net/pyodide/v0.27.2/full",
         stderr: (text) => console.log(text),
         stdout: (text) => printHandler(text),
@@ -37,6 +37,9 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
         .catch((error) => {
           console.error("Error loading Pyodide:", error);
         });
+    }
+    if (typeof window !== "undefined") {
+      initPyodide();
     }
     setEvaluationAllowed(false);
     if (isTesting) {
