@@ -9,6 +9,17 @@ declare module "@remix-run/node" {
 }
 
 export default defineConfig({
+  ssr: {
+    // List packages that you do NOT want treated as external
+    // (i.e., that must be fully bundled into the server build)
+    noExternal: [
+      "@radix-ui/react-scroll-area",
+      "@radix-ui/react-use-callback-ref",
+      "/@radix-ui/.*/",
+      "lucide-react",
+      // or even use a regex like /@radix-ui\/.*/
+    ],
+  },
   plugins: [
     remix({
       future: {
