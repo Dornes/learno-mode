@@ -9,6 +9,9 @@ declare module "@remix-run/node" {
 }
 
 export default defineConfig({
+  ssr: {
+    noExternal: ["/@radix-ui/.*/", "lucide-react"],
+  },
   plugins: [
     remix({
       future: {
