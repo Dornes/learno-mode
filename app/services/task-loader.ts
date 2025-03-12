@@ -1,7 +1,7 @@
 import { LoaderFunction } from "@remix-run/node";
 import OpenAI from "openai";
 import { supabaseClient as supabase } from "~/auth/supabase.server";
-import { Task } from "~/types/types";
+import { Assignment, Task } from "~/types/types";
 
 export const fetchThread = async (taskId: number) => {
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -45,6 +45,12 @@ export const taskLoader: LoaderFunction = async (args) => {
     fetchThread(taskId),
   ]);
 
+  const assignment = await supabase
+    .from("assignments")
+    .select("*")
+    .eq("id", taskResult.data.assignment_id)
+    .single();
+
   const threadData = thread ? await thread.json() : null;
 
   if (taskResult.error) {
@@ -54,5 +60,6 @@ export const taskLoader: LoaderFunction = async (args) => {
   return {
     task: taskResult.data as Task,
     thread: threadData ?? [],
+    assignment: assignment.data as Assignment,
   };
 };

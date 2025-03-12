@@ -10,7 +10,7 @@ export const loader: LoaderFunction = taskLoader;
 export const action: ActionFunction = taskAction;
 
 export default function Task() {
-  const { task } = useLoaderData<typeof loader>();
+  const { task, assignment } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -21,6 +21,7 @@ export default function Task() {
       <PythonCodeRunner
         solution={task.solution ?? ""}
         test_code={task.test_code}
+        is_control_group={assignment.is_control_group}
       />
       <ChatButton taskDescription={task.description} />
     </>

@@ -1,12 +1,18 @@
 import { ActionFunction, redirect } from "@remix-run/node";
+import { i } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
 import { supabaseClient as supabase } from "~/auth/supabase.server";
 
 const editAssignment = async (assignmentId: number, formData: FormData) => {
   const assignmentTitle = formData.get("assignmentTitle") as string;
   const assignmentDescription = formData.get("assignmentDescription") as string;
+  const isControlGroup = formData.get("isControlGroup") === "on";
   const { error } = await supabase
     .from("assignments")
-    .update({ title: assignmentTitle, description: assignmentDescription })
+    .update({
+      title: assignmentTitle,
+      description: assignmentDescription,
+      is_control_group: isControlGroup,
+    })
     .eq("id", assignmentId);
   if (error) {
     throw new Error(`Error editing assignment: ${error.message}`);
