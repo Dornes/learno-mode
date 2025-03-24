@@ -1,6 +1,5 @@
 import { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-// import ChatButton from "~/components/custom/chat-button";
 import Sidebar from "~/components/custom/sidebar";
 import { assignmentLoader } from "~/services/assignment-loader";
 import { taskAction } from "~/services/task-action";
@@ -17,7 +16,6 @@ export default function Assignment() {
       <div className="flex-1 p-6">
         <Outlet />
       </div>
-      {/* <ChatButton taskDescription={tasks.description} /> */}
     </div>
   );
 }
