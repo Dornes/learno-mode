@@ -28,7 +28,8 @@ const saveCodeSubmission = async (
 
 const generateAiResponse = async (
   formData: FormData,
-  isEvaluation: boolean
+  isEvaluation: boolean,
+  taskId: number
 ) => {
   const userMessage = formData.get("message") as string;
   const threadIdInput = formData.get("threadId") as string;
@@ -58,6 +59,10 @@ const generateAiResponse = async (
           : process.env.ASSISTO_MODE_ID) || "",
     });
 
+    if (!isEvaluation) {
+      saveThreadId(threadId, taskId, false);
+    }
+
     const statuses = ["requires_action", "in_progress", "cancelling", "queued"];
 
     while (statuses.includes(run.status)) {
@@ -83,7 +88,7 @@ const evaluateTask = async (formData: FormData, taskId: number) => {
   const feedback = formData.get("feedback") as string;
   const isApproved = formData.get("isApproved") as string;
   const threadId = formData.get("threadId") as string;
-  saveThreadId(threadId, taskId);
+  saveThreadId(threadId, taskId, true);
   try {
     await supabase
       .from("tasks")
@@ -100,13 +105,24 @@ const evaluateTask = async (formData: FormData, taskId: number) => {
   }
 };
 
-const saveThreadId = async (threadId: string, taskId: number) => {
+const saveThreadId = async (
+  threadId: string,
+  taskId: number,
+  isEvaluation: boolean
+) => {
   try {
     await supabase
       .from("tasks")
-      .update({
-        thread_id: threadId,
-      })
+      .update(
+        isEvaluation
+          ? {
+              thread_id: threadId,
+            }
+          : {
+              assistant_thread: threadId,
+            }
+      )
+      .is(isEvaluation ? "thread_id" : "assistant_thread", null)
       .eq("id", taskId);
   } catch (error) {
     if (error instanceof Error) {
@@ -127,9 +143,9 @@ export const taskAction: ActionFunction = async ({ request, params }) => {
   } else if (actionType === "save") {
     return saveCodeSubmission(formData, taskId, false);
   } else if (actionType === "evaluate-chat") {
-    return generateAiResponse(formData, true);
+    return generateAiResponse(formData, true, taskId);
   } else if (actionType === "assistant-chat") {
-    return generateAiResponse(formData, false);
+    return generateAiResponse(formData, false, taskId);
   } else if (actionType === "evaluate-task") {
     return evaluateTask(formData, taskId);
   }
