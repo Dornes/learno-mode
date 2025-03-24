@@ -58,7 +58,9 @@ const ChatButton = ({ taskDescription, threadId, thread }: ChatButtonProps) => {
   return (
     <div>
       <Button
-        className="fixed bottom-4 right-4 rounded-full p-6 h-16 w-30 text-lg [&_svg]:size-7"
+        className={`fixed bottom-4 right-4 rounded-full p-6 h-16 w-30 text-lg [&_svg]:size-7 ${
+          open && "hidden"
+        }`}
         onClick={() => setOpen(!open)}
       >
         Ask AI <BotMessageSquare />
@@ -139,7 +141,12 @@ const ChatButton = ({ taskDescription, threadId, thread }: ChatButtonProps) => {
               name="threadId"
               value={threadId ?? actionData?.threadId}
             />
-            <Button type="submit" value="assistant-chat" name="action">
+            <Button
+              type="submit"
+              value="assistant-chat"
+              name="action"
+              disabled={input === ""}
+            >
               Send
             </Button>
           </Form>
