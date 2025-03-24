@@ -84,13 +84,9 @@ const ChatButton = ({ taskDescription, threadId, thread }: ChatButtonProps) => {
           <ScrollArea className="h-full">
             {(actionData?.messagesData ?? thread)?.map((message, index) => {
               const firstBlock = message?.content?.[0];
-
               if (firstBlock?.type !== "text") return null;
-
-              const isTaskDescription =
-                index === 0 && firstBlock.text.value === taskDescription;
-              if (isTaskDescription) return null;
-
+              if (index === 0 && firstBlock.text.value === taskDescription)
+                return null;
               const isUser = message?.role === "user";
 
               return (
