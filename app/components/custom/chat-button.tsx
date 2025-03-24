@@ -14,6 +14,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import MessageLoading from "./message-loading";
 import { Message } from "openai/resources/beta/threads/messages.mjs";
 import { MarkdownRenderer } from "./markdown-renderer";
+import OpenAI from "openai";
 
 interface ActionData {
   messagesData: Message[];
@@ -22,9 +23,11 @@ interface ActionData {
 
 interface ChatButtonProps {
   taskDescription: string;
+  threadId?: string;
+  thread?: OpenAI.Beta.Threads.Messages.Message[];
 }
 
-const ChatButton = ({ taskDescription }: ChatButtonProps) => {
+const ChatButton = ({ taskDescription, threadId, thread }: ChatButtonProps) => {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [currentMessage, setCurrentMessage] = useState("");
@@ -37,12 +40,14 @@ const ChatButton = ({ taskDescription }: ChatButtonProps) => {
   }, [actionData]);
   // Automatically send the task description to the chatbot when the component mounts
   useEffect(() => {
-    setIsLoading(true);
-    const formData = new FormData();
-    formData.append("message", taskDescription);
-    formData.append("action", "assistant-chat");
-    submit(formData, { method: "post" });
-  }, [taskDescription, submit]);
+    if (!threadId) {
+      setIsLoading(true);
+      const formData = new FormData();
+      formData.append("message", taskDescription);
+      formData.append("action", "assistant-chat");
+      submit(formData, { method: "post" });
+    }
+  }, [taskDescription, submit, threadId]);
 
   const handleSubmit = () => {
     setCurrentMessage(input); // Set the current message to the input value
@@ -77,46 +82,39 @@ const ChatButton = ({ taskDescription }: ChatButtonProps) => {
         </CardHeader>
         <CardContent className="h-[calc(100%-8rem)] w-full">
           <ScrollArea className="h-full">
-            {actionData?.messagesData?.map((message, index) => {
-              // for safety, verify message?.content exists & isn't empty
-              const firstBlock = message?.content[0];
+            {(actionData?.messagesData ?? thread)?.map((message, index) => {
+              const firstBlock = message?.content?.[0];
 
-              // type guard: only render if it's actually a text block
-              if (firstBlock?.type === "text") {
-                const isTaskDescription =
-                  index === 0 && firstBlock.text.value === taskDescription;
+              if (firstBlock?.type !== "text") return null;
 
-                if (isTaskDescription) {
-                  return null;
-                }
-                return (
-                  <div
-                    key={message?.id}
-                    className={`mb-4 pr-3 ${
-                      message?.role == "user" ? "text-right" : "text-left"
+              const isTaskDescription =
+                index === 0 && firstBlock.text.value === taskDescription;
+              if (isTaskDescription) return null;
+
+              const isUser = message?.role === "user";
+
+              return (
+                <div
+                  key={message?.id}
+                  className={`mb-4 pr-3 ${isUser ? "text-right" : "text-left"}`}
+                >
+                  <span
+                    className={`inline-block p-2 rounded-lg ${
+                      isUser
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-black"
                     }`}
                   >
-                    <span
-                      className={`inline-block p-2 rounded-lg ${
-                        message?.role === "user"
-                          ? `bg-blue-500 text-white`
-                          : `bg-gray-200 text-black`
-                      }`}
-                    >
-                      <MarkdownRenderer content={firstBlock.text.value} />
-                    </span>
-                  </div>
-                );
-              }
-
-              // If it's not text, return null or handle differently
-              return null;
+                    <MarkdownRenderer content={firstBlock.text.value} />
+                  </span>
+                </div>
+              );
             })}
 
             {isLoading ? (
               <div className="text-right space-y-2">
                 {currentMessage && (
-                  <span className="inline-block p-2 rounded-lg bg-blue-500 text-white">
+                  <span className="inline-block p-2 mr-3 rounded-lg bg-blue-500 text-white">
                     {currentMessage}
                   </span>
                 )}
@@ -140,7 +138,11 @@ const ChatButton = ({ taskDescription }: ChatButtonProps) => {
               value={input || ""}
               onChange={(e) => setInput(e.target.value)} // Update input state on change
             />
-            <input type="hidden" name="threadId" value={actionData?.threadId} />
+            <input
+              type="hidden"
+              name="threadId"
+              value={threadId ?? actionData?.threadId}
+            />
             <Button type="submit" value="assistant-chat" name="action">
               Send
             </Button>

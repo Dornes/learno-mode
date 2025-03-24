@@ -18,6 +18,7 @@ export type Task = {
   solution: string | null;
   assignment_id: number;
   thread_id: string | null;
+  assistant_thread: string | null;
 };
 
 export enum STATUS {

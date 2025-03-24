@@ -3,12 +3,12 @@ import OpenAI from "openai";
 import { supabaseClient as supabase } from "~/auth/supabase.server";
 import { Task } from "~/types/types";
 
-export const fetchThread = async (taskId: number) => {
+export const fetchThread = async (taskId: number, isEvaluation: boolean) => {
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const { data, error } = await supabase
     .from("tasks")
-    .select("thread_id")
+    .select("thread_id, assistant_thread")
     .eq("id", taskId)
     .single();
 
@@ -16,7 +16,7 @@ export const fetchThread = async (taskId: number) => {
     throw new Error(`Error fetching thread ID: ${error.message}`);
   }
 
-  const threadId = data?.thread_id;
+  const threadId = isEvaluation ? data?.thread_id : data?.assistant_thread;
 
   try {
     if (!threadId) {
@@ -34,18 +34,23 @@ export const fetchThread = async (taskId: number) => {
 export const taskLoader: LoaderFunction = async (args) => {
   const params = args.params;
   const taskId = Number(params.taskId);
-  const threadResponse = await fetchThread(taskId);
 
   if (isNaN(taskId)) {
     throw new Error("Invalid task ID");
   }
 
-  const [taskResult, thread] = await Promise.all([
+  const [taskResult, evaluationThread, assistantThread] = await Promise.all([
     supabase.from("tasks").select("*").eq("id", taskId).single(),
-    fetchThread(taskId),
+    fetchThread(taskId, true),
+    fetchThread(taskId, false),
   ]);
 
-  const threadData = thread ? await thread.json() : null;
+  const evaluationThreadData = evaluationThread
+    ? await evaluationThread.json()
+    : null;
+  const assistantThreadData = assistantThread
+    ? await assistantThread.json()
+    : null;
 
   if (taskResult.error) {
     throw new Error(`Error fetching task: ${taskResult.error.message}`);
@@ -53,6 +58,7 @@ export const taskLoader: LoaderFunction = async (args) => {
 
   return {
     task: taskResult.data as Task,
-    thread: threadData ?? [],
+    evaluationThread: evaluationThreadData ?? [],
+    assistantThread: assistantThreadData ?? [],
   };
 };
