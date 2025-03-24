@@ -11,9 +11,14 @@ import "prismjs/themes/prism.css";
 interface PythonCodeRunnerProps {
   solution: string;
   test_code: string;
+  is_control_group: boolean;
 }
 
-function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
+function PythonCodeRunner({
+  solution,
+  test_code,
+  is_control_group,
+}: PythonCodeRunnerProps) {
   const [pyodide, setPyodide] = useState<PyodideInterface | null>(null);
   const [output, setOutput] = useState<string | null>(null);
   const [codeInput, setCodeInput] = useState<string>(solution);
@@ -127,13 +132,15 @@ function PythonCodeRunner({ solution, test_code }: PythonCodeRunnerProps) {
               >
                 Test
               </Button>
-              <Button
-                name="action"
-                value="evaluate"
-                // disabled={!evaluationAllowed}
-              >
-                Evaluate
-              </Button>
+              {!is_control_group && (
+                <Button
+                  name="action"
+                  value="evaluate"
+                  //disabled={!evaluationAllowed}
+                >
+                  Evaluate
+                </Button>
+              )}
             </div>
           </div>
           <div className="bg-gray-100 p-4 rounded-md w-full">
