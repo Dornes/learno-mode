@@ -1,5 +1,4 @@
 import { ActionFunction, redirect } from "@remix-run/node";
-import { i } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
 import { supabaseClient as supabase } from "~/auth/supabase.server";
 
 const editAssignment = async (assignmentId: number, formData: FormData) => {
