@@ -6,6 +6,7 @@ export type Assignment = {
   total_tasks: number;
   approved_tasks: number;
   all_tasks_approved: boolean;
+  is_control_group: boolean;
 };
 
 export type Task = {

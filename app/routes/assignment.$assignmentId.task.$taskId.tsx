@@ -9,15 +9,17 @@ import OpenAI from "openai";
 import { Task } from "~/types/types";
 
 interface TaskLoaderData {
-  assistantThread: OpenAI.Beta.Threads.Messages.Message[];
   task: Task;
+  isControlGroup: boolean;
+  assistantThread: OpenAI.Beta.Threads.Messages.Message[];
 }
 
 export const loader: LoaderFunction = taskLoader;
 export const action: ActionFunction = taskAction;
 
 export default function TaskPage() {
-  const { task, assistantThread } = useLoaderData<TaskLoaderData>();
+  const { task, isControlGroup, assistantThread } =
+    useLoaderData<TaskLoaderData>();
 
   return (
     <>
@@ -28,6 +30,7 @@ export default function TaskPage() {
       <PythonCodeRunner
         solution={task.solution ?? ""}
         test_code={task.test_code!}
+        isControlGroup={isControlGroup}
       />
       <ChatButton
         taskDescription={task.description!}

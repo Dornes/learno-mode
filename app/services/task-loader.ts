@@ -33,15 +33,22 @@ export const taskLoader: LoaderFunction = async (args) => {
     throw new Error("Invalid task ID");
   }
 
-  const [{ data, error }, evaluation, assistant] = await Promise.all([
+  const [{ data: task, error }, evaluation, assistant] = await Promise.all([
     supabase.from("tasks").select("*").eq("id", taskId).single(),
     fetchThread(taskId, true),
     fetchThread(taskId, false),
   ]);
   if (error) throw new Error(`Error fetching task: ${error.message}`);
 
+  const isControlGroup = await supabase
+    .from("assignments")
+    .select("is_control_group")
+    .eq("id", task.assignment_id)
+    .single();
+
   return {
-    task: data as Task,
+    task: task as Task,
+    isControlGroup: isControlGroup,
     evaluationThread: evaluation ?? [],
     assistantThread: assistant ?? [],
   };

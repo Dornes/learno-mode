@@ -79,6 +79,14 @@ const EditAssignment = () => {
               defaultValue={assignment?.description || ""}
             />
           </div>
+          <div className="flex space-x-2">
+            <p className="text-gray-500 text-sm">Control group</p>
+            <input
+              type="checkbox"
+              name="isControlGroup"
+              defaultChecked={assignment?.is_control_group}
+            />
+          </div>
           <div className="space-x-2">
             <Button type="submit" name="action" value="editAssignment">
               Update assignment
