@@ -136,7 +136,7 @@ function PythonCodeRunner({
                 <Button
                   name="action"
                   value="evaluate"
-                  //disabled={!evaluationAllowed}
+                  disabled={!evaluationAllowed}
                 >
                   Evaluate
                 </Button>
