@@ -66,7 +66,7 @@ const ChatButton = ({ taskDescription, threadId, thread }: ChatButtonProps) => {
         Ask AI <BotMessageSquare />
       </Button>
       <Card
-        className={`fixed bottom-4 right-4 w-[50rem] h-96 ${
+        className={`fixed bottom-4 right-4 w-[60rem] h-96 ${
           open ? "block" : "hidden"
         }`}
       >
@@ -82,7 +82,7 @@ const ChatButton = ({ taskDescription, threadId, thread }: ChatButtonProps) => {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="h-[calc(100%-8rem)] w-full">
+        <CardContent className="h-[calc(100%-8rem)]">
           <ScrollArea className="h-full">
             {(actionData?.messagesData ?? thread)?.map((message, index) => {
               const firstBlock = message?.content?.[0];
@@ -97,7 +97,7 @@ const ChatButton = ({ taskDescription, threadId, thread }: ChatButtonProps) => {
                   className={`mb-4 pr-3 ${isUser ? "text-right" : "text-left"}`}
                 >
                   <span
-                    className={`inline-block p-2 rounded-lg ${
+                    className={`inline-block p-2 rounded-lg overflow-hidden break-words ${
                       isUser
                         ? "bg-blue-500 text-white"
                         : "bg-gray-200 text-black"
