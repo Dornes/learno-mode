@@ -40,15 +40,15 @@ export const taskLoader: LoaderFunction = async (args) => {
   ]);
   if (error) throw new Error(`Error fetching task: ${error.message}`);
 
-  const isControlGroup = await supabase
+  const { data: assignment } = await supabase
     .from("assignments")
-    .select("is_control_group")
+    .select("*")
     .eq("id", task.assignment_id)
     .single();
 
   return {
     task: task as Task,
-    isControlGroup: isControlGroup,
+    isControlGroup: assignment.is_control_group,
     evaluationThread: evaluation ?? [],
     assistantThread: assistant ?? [],
   };
