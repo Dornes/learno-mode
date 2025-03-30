@@ -2,15 +2,24 @@ import { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import ReactMarkdown from "react-markdown";
 import ChatButton from "~/components/custom/chat-button";
-import PythonCodeRunner from "~/components/custom/python-code-runner";
-import { taskAction } from "~/services/task-action";
-import { taskLoader } from "~/services/task-loader";
+import PythonCodeRunner from "../components/custom/python-code-runner";
+import { taskAction } from "../services/task-action";
+import { taskLoader } from "../services/task-loader";
+import OpenAI from "openai";
+import { Task } from "~/types/types";
+
+interface TaskLoaderData {
+  task: Task;
+  isControlGroup: boolean;
+  assistantThread: OpenAI.Beta.Threads.Messages.Message[];
+}
 
 export const loader: LoaderFunction = taskLoader;
 export const action: ActionFunction = taskAction;
 
-export default function Task() {
-  const { task, assignment } = useLoaderData<typeof loader>();
+export default function TaskPage() {
+  const { task, isControlGroup, assistantThread } =
+    useLoaderData<TaskLoaderData>();
 
   return (
     <>
@@ -20,10 +29,14 @@ export default function Task() {
       </div>
       <PythonCodeRunner
         solution={task.solution ?? ""}
-        test_code={task.test_code}
-        is_control_group={assignment.is_control_group}
+        test_code={task.test_code!}
+        isControlGroup={isControlGroup}
       />
-      <ChatButton taskDescription={task.description} />
+      <ChatButton
+        taskDescription={task.description!}
+        threadId={task.assistant_thread ?? undefined}
+        thread={assistantThread}
+      />
     </>
   );
 }

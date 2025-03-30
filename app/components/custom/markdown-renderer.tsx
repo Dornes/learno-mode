@@ -37,7 +37,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           );
 
           return (
-            <pre className="p-4 bg-white rounded-md overflow-auto my-4">
+            <pre className="p-4 bg-white rounded-md overflow-auto my-4 whitespace-pre-wrap break-words max-w-full">
               <code
                 className={`language-${language}`}
                 dangerouslySetInnerHTML={{ __html: highlighted }}

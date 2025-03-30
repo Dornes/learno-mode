@@ -7,14 +7,14 @@ import { taskLoader } from "~/services/task-loader";
 import { Button } from "~/components/ui/button";
 
 interface TaskLoaderData {
-  thread: OpenAI.Beta.Threads.Messages.Message[];
+  evaluationThread: OpenAI.Beta.Threads.Messages.Message[];
   task: Task;
 }
 
 export const loader: LoaderFunction = taskLoader;
 
 export default function ThreadPage() {
-  const { task, thread } = useLoaderData<TaskLoaderData>();
+  const { task, evaluationThread } = useLoaderData<TaskLoaderData>();
 
   const downloadFile = (data: string, filename: string, type: string) => {
     const blob = new Blob([data], { type });
@@ -25,7 +25,7 @@ export default function ThreadPage() {
   };
 
   const handleDownloadTxt = () => {
-    const txtData = thread
+    const txtData = evaluationThread
       .map((message) => {
         // Safely get the first content block
         const firstBlock = message?.content?.[0];
@@ -53,7 +53,7 @@ export default function ThreadPage() {
         <div className="mb-4">
           <Button onClick={handleDownloadTxt}>Download</Button>
         </div>
-        {thread.map((message) => {
+        {evaluationThread.map((message) => {
           return (
             <div
               key={message?.id}
